@@ -107,6 +107,9 @@ const TimeSelection = () => {
   return (
     <Box p={8} maxW="container.md" mx="auto">
       <Heading mb={4}>Select a Time Window</Heading>
+      <Text fontSize="md" mb={6}>
+        This sucks but it will make an event on your personal Google Calendar for March 20 if you wanna check.
+      </Text>
       <SimpleGrid columns={{ sm: 2, md: 3 }} spacing={5}>
         {timeWindows.map((timeWindow) => (
           <Box

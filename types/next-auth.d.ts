@@ -6,8 +6,7 @@ declare module 'next-auth' {
    * Extends the built-in session.user types with custom properties.
    */
   interface User {
-    // Add custom properties here. Example:
-    // id: string;
+    
   }
 
   /**

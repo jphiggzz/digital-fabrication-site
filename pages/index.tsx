@@ -1,4 +1,4 @@
-'use client'
+// index.tsx
 import { Box, Center, Button, VStack, Text } from '@chakra-ui/react';
 import { signIn } from 'next-auth/react';
 
@@ -12,13 +12,21 @@ const LandingPage = () => {
         <Text fontSize="md" textAlign="center">
           Click below to sign into Google
         </Text>
-        {/* Google Sign-in Button */}
+        {/* Student Sign-in Button */}
         <Button
           colorScheme="blue"
           size="lg"
           onClick={() => signIn('google', { callbackUrl: '/reserve' })}
         >
-          Sign in with Google
+          Sign in as Student
+        </Button>
+        {/* Admin Sign-in Button */}
+        <Button
+          colorScheme="teal"
+          size="lg"
+          onClick={() => signIn('google', { callbackUrl: '/add-timeslot' })}
+        >
+          Sign in as Admin
         </Button>
       </VStack>
     </Box>
