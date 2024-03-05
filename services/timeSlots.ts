@@ -1,6 +1,6 @@
 import db from '@/firebase/firestore/index';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
-import { TimeSlot } from '@/types/firestore-types';
+import { TimeSlot } from '@/types/TimeSlot';
 
 // Function to add a time slot document to Firestore
 export const addTimeSlot = async (timeSlot: TimeSlot): Promise<void> => {

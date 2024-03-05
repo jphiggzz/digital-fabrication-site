@@ -26,7 +26,7 @@ const AdminLanding = () => {
           <Button colorScheme="blue" size="lg">
             Manage Reservations
           </Button>
-        </Link>    
+        </Link>
         { /* Button for managing Printers */}
         <Link href='/manage-printers' color='blue.400' _hover={{ color: 'blue.500' }}>
           <Button colorScheme="blue" size="lg">

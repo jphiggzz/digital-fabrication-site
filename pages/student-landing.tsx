@@ -2,8 +2,8 @@
 import { Box, Heading, Text, Button, VStack } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/next-js';
 
-// Landing page for students, currently only has reserve timeslot
-// but will eventually link to project gallery and info
+{ /* Landing page for students, currently only has reserve timeslot */}
+{/*     but will eventually link to project gallery and info        */}
 
 const StudentLanding = () => {
   return (

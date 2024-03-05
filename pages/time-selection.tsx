@@ -20,7 +20,7 @@ import {
 // This file is a page that allows a student to select a 
 // time window for a 3D printer reservation.
 // Currently creates a GCal event on March 20th for demonstration purposes.
-// ** still need to connect to DB **
+// ** STILL BROKEN MIGHT SCRAP **
 
 interface TimeWindow {
   id: number;
