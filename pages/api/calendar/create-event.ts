@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { google, calendar_v3 } from 'googleapis';
 
+// This API route is responsible for creating a new calendar event
+// on the user's Google Calendar using the provided access token
+
 // Define a type for the expected request body
 type RequestBody = {
   accessToken: string;

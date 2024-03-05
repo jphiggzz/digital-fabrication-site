@@ -1,7 +1,9 @@
-// pages/add-timeslot.tsx
 import React from 'react';
 import { Button, Box, Heading, useToast } from '@chakra-ui/react';
 import { addTimeSlot } from '../utils/testPopulate'; // Adjust the path as necessary
+
+// This file is a page that allows an admin to add a time slot to the database.
+// Currently under construction, probably doesn't work 
 
 const AddTimeSlotPage = () => {
   const toast = useToast();

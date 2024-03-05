@@ -2,7 +2,10 @@
 import { Box, Heading, Text, Button, VStack } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/next-js';
 
-const Reserve = () => {
+// Landing page for students, currently only has reserve timeslot
+// but will eventually link to project gallery and info
+
+const StudentLanding = () => {
   return (
     <Box p={8} maxW="container.md" mx="auto">
       <VStack spacing={4} align="flex-start">
@@ -22,4 +25,4 @@ const Reserve = () => {
   );
 };
 
-export default Reserve;
+export default StudentLanding;

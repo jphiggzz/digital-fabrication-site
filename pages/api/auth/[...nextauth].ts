@@ -2,6 +2,10 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { JWT } from "next-auth/jwt";
 
+// This is the configuration for the Google OAuth provider
+// It is used to authenticate users with Google and to obtain an access token
+// which can be used to make requests to the Google Calendar API
+
 export default NextAuth({
   providers: [
     GoogleProvider({
@@ -9,12 +13,11 @@ export default NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
       authorization: {
         params: {
+          // Authorize scope to access user's calendar
           scope: 'openid https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events',
-          // Include any other scopes you need
         },
       },
     }),
-    // other providers as needed
   ],
   callbacks: {
     async jwt({ token, account }) {
@@ -30,5 +33,4 @@ export default NextAuth({
       return session;
     },
   },
-  // Your NextAuth configuration...
 });

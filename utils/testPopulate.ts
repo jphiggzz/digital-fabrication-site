@@ -1,6 +1,6 @@
 import { collection, addDoc, updateDoc } from 'firebase/firestore';
 import db from '@/firebase/firestore/index'; // Adjust the path as necessary
-import { TimeSlot } from '@/firebase/firestore/collections'; // Adjust the path as necessary
+import { TimeSlot } from '@/types/firestore-types'; // Adjust the path as necessary
 
 const TIMESLOTS_COLLECTION = 'timeslots'; // Replace with your actual collection name
 

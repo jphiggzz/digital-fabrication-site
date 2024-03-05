@@ -1,5 +1,5 @@
-// utils/generateDummyData.ts
-import { TimeSlot } from '../firebase/firestore/collections';
+
+import { TimeSlot } from '../types/firestore-types';
 
 function getRandomPrinter() {
   const printers = ['filament', 'powder', 'plastic'];
