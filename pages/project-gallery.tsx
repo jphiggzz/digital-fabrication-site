@@ -14,18 +14,18 @@ const ProjectGalleryPage = () => {
     <Box height="100vh" display="flex" flexDirection="column">
         <Navbar />
         <Box p={8}>
-        <Heading as="h1" mb={4}>
-            Project Gallery
-        </Heading>
-        <SimpleGrid columns={3} spacing={10}>
-            {projects.map((project, index) => (
-            <Box key={index} p={5} shadow="md" borderWidth="1px">
-                <Image src={project.imageUrl} alt={project.title} />
-                <Heading fontSize="xl" mt={4}>{project.title}</Heading>
-                <Text mt={2}>{project.description}</Text>
-            </Box>
-            ))}
-        </SimpleGrid>
+          <Heading as="h1" mb={4}>
+              Project Gallery
+          </Heading>
+          <SimpleGrid columns={3} spacing={10}>
+              {projects.map((project, index) => (
+              <Box key={index} p={5} shadow="md" borderWidth="1px">
+                  <Image src={project.imageUrl} alt={project.title} />
+                  <Heading fontSize="xl" mt={4}>{project.title}</Heading>
+                  <Text mt={2}>{project.description}</Text>
+              </Box>
+              ))}
+          </SimpleGrid>
         </Box>
     </Box>
   );
