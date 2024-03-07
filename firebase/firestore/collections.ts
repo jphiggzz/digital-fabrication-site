@@ -6,3 +6,9 @@ export const RESERVATION_COLLECTION = 'reservations';
 
 // name of the printer collection in Firebase
 export const PRINTER_COLLECTION = 'printers';
+
+// name of the user collection in Firebase
+export const USER_COLLECTION = 'users';
+
+// name of the resources collection in Firebase
+export const RESOURCES_COLLECTION = 'projects';

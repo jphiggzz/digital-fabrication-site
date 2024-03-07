@@ -4,6 +4,8 @@ import AdminHeader from '@/components/AdminHeader'; // Assuming AdminHeader exis
 import Footer from '@/components/Footer';
 import { useRouter } from 'next/router';
 import { Form3, MakerGearM3, Voron } from '@/assets/printer-photos';
+import { collection, addDoc } from 'firebase/firestore';
+import db from '@/firebase/firestore/index';
 
 // Printer data structure
 interface Printer {
@@ -35,9 +37,37 @@ const PrintersPage = () => {
         router.push('/time-selection');
     };
 
-    const handleAddPrinter = () => {
-        onOpen();
-    };
+    const handleAddPrinter = async () => {
+        try {
+            console.log('Before adding printer');
+          // Reference to the "printers" collection in Firestore
+          const collectionRef = collection(db, 'printers');
+            console.log('After adding printer');
+          // Create a new printer object with the form data
+          const newPrinter = {
+            name: newPrinterInfo.name,
+            description: newPrinterInfo.description,
+            // Add other relevant fields for the printer
+          };
+          try   {
+            console.log('Before adding printer');
+            const docRef = await addDoc(collectionRef, newPrinter);
+            } catch (error) {   
+            console.error('Error adding printer: ', error);
+            }
+          // Write the new printer to Firestore
+        console.log('New printer added with ID: ');
+    
+          // Clear the form fields after successful submission
+          setNewPrinterInfo({ name: '', description: '', image: null });
+    
+          // Close the modal
+          onClose();
+        } catch (error) {
+          console.error('Error adding printer: ', error);
+        }
+      };
+    
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewPrinterInfo({ ...newPrinterInfo, name: e.target.value });
@@ -141,7 +171,7 @@ const PrintersPage = () => {
                         />
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="blue" mr={3}>
+                        <Button  onClick={onClose} colorScheme="blue" mr={3}>
                             Save
                         </Button>
                         <Button onClick={onClose}>Cancel</Button>

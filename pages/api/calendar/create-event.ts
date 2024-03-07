@@ -10,20 +10,24 @@ type RequestBody = {
   event: calendar_v3.Schema$Event;
 };
 
+// This function will be called when the API route receives a POST request
+// It expects the request body to contain an access token and a calendar event
+// It will attempt to create the event on the user's Google Calendar
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // Ensure the request is a POST request
   if (req.method !== 'POST') {
     return res.status(405).end('Method Not Allowed');
   }
-
+  // Destructure the access token and event from the request body
   const { accessToken, event }: RequestBody = req.body;
 
   if (!accessToken) {
     return res.status(400).json({ error: 'Access token is required' });
   }
-
+  // If the event is missing required fields, respond with an error
   try {
     // Initialize the Google OAuth2 client with TypeScript annotations
     const oauth2Client = new google.auth.OAuth2();

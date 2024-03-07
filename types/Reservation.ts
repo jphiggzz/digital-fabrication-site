@@ -1,12 +1,13 @@
-// Type definition for the TimeSlot object
-// This stores any time slot, reserved or unreserved
-export interface Reservation {
-    id: string; // Unique identifier for the time slot
-    label: string; // Human-readable label (e.g., '9:00 AM - 10:00 AM')
-    startDateTime: string; // ISO string for start time
-    endDateTime: string; // ISO string for end time
-    studentEmail: string | null; // Email of the student who reserved the slot, null if not reserved
-    printerId: string | null; // ID of the printer reserved, null if not reserved
-    printerName: string | null;
-  }
+import { TimeSlot } from './TimeSlot';
 
+// Type definition for the Reservation object
+// This extends the TimeSlot object to include 
+// the student's name and email 
+// and the printer's ID and name
+
+export interface Reservation extends TimeSlot{
+    studentName: string; // Name of the student who reserved the slot
+    studentEmail: string; // Email of the student who reserved the slot
+    printerId: string; // ID of the printer reserved
+    printerName: string; // Name of the printer reserved
+  }
