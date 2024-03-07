@@ -24,6 +24,7 @@
     "next-auth": "^4.24.6",
     "node": "^21.6.2",
     "react": "^18.2.0",
+    "react-calendar": "^4.8.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
