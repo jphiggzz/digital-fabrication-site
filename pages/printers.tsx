@@ -14,15 +14,15 @@ const printers = [
 
 const PrintersPage = () => {
   return (
-    <Box height="100vh" display="flex" flexDirection="column" bg="gray.100">
+    <Box height="100vh" display="flex" flexDirection="column">
         <Navbar />
-        <Box p={8}>
+        <Box p={8} maxW="container.md" mx="auto" flexGrow={1} display="flex" flexDirection="column" bg="gray.100">
           <Heading as="h1" mb={4}>
               Printers
           </Heading>
           <SimpleGrid columns={3} spacing={10}>
               {printers.map((printer, index) => (
-              <Box key={index} p={5} shadow="md" borderWidth="1px" bg="gray.50">
+              <Box key={index} p={5} shadow="md" borderWidth="1px" bg="white">
                   <Image src={printer.imageUrl} alt={printer.name} />
                   <Heading fontSize="xl">{printer.name}</Heading>
                   <Text mt={4}>Status: {printer.status}</Text>
