@@ -15,10 +15,10 @@ const AdminLanding = () => {
         <Text fontSize="lg">
             Hub for all admin functions (manage time slots, reservations, and printers here)
         </Text>
-        { /* Button for managing Time Slots */}
-        <Link href='/manage-time-slots' color='blue.400' _hover={{ color: 'blue.500' }}>
+        { /* Button for managing the Calendar */}
+        <Link href='/manage-calendar' color='blue.400' _hover={{ color: 'blue.500' }}>
           <Button colorScheme="blue" size="lg">
-            Manage Time Slots
+            Manage Calendar
           </Button>
         </Link>   
         { /* Button for managing Reservations */}
