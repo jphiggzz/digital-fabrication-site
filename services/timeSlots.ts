@@ -1,15 +1,47 @@
-import db from '@/firebase/firestore/index';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import db from '@/firebase/firestore/index'; // Adjust this path as per your project structure
+import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { TimeSlot } from '@/types/TimeSlot';
 
-// Function to add a time slot document to Firestore
-export const addTimeSlot = async (timeSlot: TimeSlot): Promise<void> => {
-    const timeSlotsCollection = collection(db, 'time-slots');
-    await addDoc(timeSlotsCollection, timeSlot);
+// Reference to the timeslots collection in Firestore
+const timeSlotCollectionRef = collection(db, 'timeslots');
+
+// Create a new timeslot
+export const addTimeSlot = async (timeSlot: Omit<TimeSlot, 'id'>): Promise<TimeSlot> => {
+    const newTimeSlotRef = doc(timeSlotCollectionRef);
+    const newTimeSlot: TimeSlot = {
+        id: newTimeSlotRef.id,
+        ...timeSlot
+    };
+    await setDoc(newTimeSlotRef, newTimeSlot);
+    return newTimeSlot;
 };
 
-// Function to retrieve all time slots from Firestore
+// Get a single timeslot by id
+export const getTimeSlot = async (id: string): Promise<TimeSlot | undefined> => {
+    const timeSlotRef = doc(db, 'timeslots', id);
+    const timeSlotSnap = await getDoc(timeSlotRef);
+
+    if (timeSlotSnap.exists()) {
+        return timeSlotSnap.data() as TimeSlot;
+    } else {
+        return undefined;
+    }
+};
+
+// Get all timeslots
 export const getTimeSlots = async (): Promise<TimeSlot[]> => {
-    const querySnapshot = await getDocs(collection(db, 'time-slots'));
-    return querySnapshot.docs.map(doc => doc.data() as TimeSlot);
+    const snapshot = await getDocs(timeSlotCollectionRef);
+    return snapshot.docs.map(doc => doc.data() as TimeSlot);
+};
+
+// Update a timeslot
+export const updateTimeSlot = async (id: string, timeSlot: Partial<TimeSlot>): Promise<void> => {
+    const timeSlotRef = doc(db, 'timeslots', id);
+    await updateDoc(timeSlotRef, timeSlot);
+};
+
+// Delete a timeslot
+export const deleteTimeSlot = async (id: string): Promise<void> => {
+    const timeSlotRef = doc(db, 'timeslots', id);
+    await deleteDoc(timeSlotRef);
 };
