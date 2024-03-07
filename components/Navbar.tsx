@@ -1,4 +1,4 @@
-import { Image, Text, Flex, Button, HStack, chakra, Link } from '@chakra-ui/react';
+import { Text, Flex, Button, HStack, chakra, Link } from '@chakra-ui/react';
 import React from 'react';
 
 const CTA = 'Go to Homepage';
@@ -11,8 +11,8 @@ const data = [
 
 export default function Header() {
   return (
-    <chakra.header id="header">
-      <Flex w="100%" px="6" py="5" align="center" justify="space-between" bg="6EC7E0">
+    <chakra.header id="header" bg="white">
+      <Flex w="100%" px="6" py="5" align="center" justify="space-between">
         {/* Logo */}
         <Link href="/student-landing">
           <Text fontSize="lg" fontWeight="bold">
@@ -27,8 +27,7 @@ export default function Header() {
             </Link>
           ))}
         </HStack>
-
-        {/* Call to action items */}
+        {/* Call to action */}
         <HStack>
             <Link href="https://www.digitalfabricationlab.com" isExternal>
                 <Button>{CTA}</Button>

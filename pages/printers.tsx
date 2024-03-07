@@ -1,5 +1,6 @@
 import { Box, Heading, SimpleGrid, Image, Text } from '@chakra-ui/react';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import { Form3, Form3L, Fuse1, MakerGearM3, SintratecKit,  Voron } from '@/assets/printer-photos';
 import { setDefaultResultOrder } from 'dns';
 
@@ -13,7 +14,7 @@ const printers = [
 
 const PrintersPage = () => {
   return (
-    <Box height="100vh" display="flex" flexDirection="column">
+    <Box height="100vh" display="flex" flexDirection="column" bg="gray.100">
         <Navbar />
         <Box p={8}>
           <Heading as="h1" mb={4}>
@@ -21,7 +22,7 @@ const PrintersPage = () => {
           </Heading>
           <SimpleGrid columns={3} spacing={10}>
               {printers.map((printer, index) => (
-              <Box key={index} p={5} shadow="md" borderWidth="1px">
+              <Box key={index} p={5} shadow="md" borderWidth="1px" bg="gray.50">
                   <Image src={printer.imageUrl} alt={printer.name} />
                   <Heading fontSize="xl">{printer.name}</Heading>
                   <Text mt={4}>Status: {printer.status}</Text>
@@ -29,6 +30,7 @@ const PrintersPage = () => {
               ))}
           </SimpleGrid>
         </Box>
+        <Footer />
     </Box>
   );
 };

@@ -1,3 +1,5 @@
-import SamplePhoto from './SamplePhoto.png'
+import Boat from './Boat.png';
+import CupHolder from './CupHolder.png';
+import Dinosaur from './Dinosaur.png'
 
-export { SamplePhoto };
+export { Boat, CupHolder, Dinosaur };
