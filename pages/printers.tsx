@@ -1,13 +1,14 @@
-import { Box, Heading, SimpleGrid, Text } from '@chakra-ui/react';
-import Navbar from '@/components/Navbar'
-import 
+import { Box, Heading, SimpleGrid, Image, Text } from '@chakra-ui/react';
+import Navbar from '@/components/Navbar';
+import { Form3, Form3L, Fuse1, MakerGearM3, SintratecKit,  Voron } from '@/assets/printer-photos';
+import { setDefaultResultOrder } from 'dns';
 
 
 // sample data for printers
 const printers = [
-  { name: 'Voron', imageUrl: SamplePhoto.src, status: 'Available' },
-  { name: 'MakerGear M3', status: 'In Use' },
-  { name: 'Form 3', status: 'Available' },
+  { name: 'Voron', imageUrl: Voron.src, status: 'Available' },
+  { name: 'MakerGear M3', imageUrl: MakerGearM3.src, status: 'In Use' },
+  { name: 'Form 3', imageUrl: Form3.src, status: 'Available' },
 ];
 
 const PrintersPage = () => {
@@ -21,7 +22,7 @@ const PrintersPage = () => {
           <SimpleGrid columns={3} spacing={10}>
               {printers.map((printer, index) => (
               <Box key={index} p={5} shadow="md" borderWidth="1px">
-                  <Image src={printer.imageUrl} alt={project.title} />
+                  <Image src={printer.imageUrl} alt={printer.name} />
                   <Heading fontSize="xl">{printer.name}</Heading>
                   <Text mt={4}>Status: {printer.status}</Text>
               </Box>
