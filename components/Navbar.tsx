@@ -4,7 +4,7 @@ import React from 'react';
 const CTA = 'Go to Homepage';
 
 const data = [
-    { label: 'Reservations', href: '/printers' },
+  { label: 'Reservations', href: '/printers' },
   { label: 'Resources', href: '/resources' },
   { label: 'Project Gallery', href: '/project-gallery' },
 ];
