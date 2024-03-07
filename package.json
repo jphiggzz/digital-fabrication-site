@@ -25,7 +25,8 @@
     "node": "^21.6.2",
     "react": "^18.2.0",
     "react-calendar": "^4.8.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.0.1"
   },
   "devDependencies": {
     "@types/firebase": "^3.2.1",

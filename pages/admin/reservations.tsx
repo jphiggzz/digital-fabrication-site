@@ -4,6 +4,8 @@ import {
   Modal, ModalOverlay, ModalContent, ModalHeader,
   ModalFooter, ModalBody, ModalCloseButton, Flex, VStack
 } from '@chakra-ui/react';
+import Footer from '@/components/Footer';
+import AdminHeader from '@/components/AdminHeader';
 
 const getRandomHours = () => {
   const hours = [];
@@ -37,16 +39,19 @@ const ManageReservations = () => {
   }).format(new Date());
 
   return (
-    <Box p={5} bg="gray.50">
-      <Heading as="h1" size="lg" >{`Reservations for ${formattedDate}`}</Heading>
-      <Text mt={2}>Click on a time slot to manage or delete the reservation.</Text>
+    <Box minHeight="100vh" display="flex" flexDirection="column" bg="gray.50">
+      <AdminHeader />
+      <Box p={8}  >
+        <Heading as="h1" size="lg" textAlign="center">{`Reservations for ${formattedDate}`}</Heading>
+        <Text mt={2} textAlign="center">Click on a time slot to manage or delete the reservation.</Text>
+      </Box>
       
-      <Flex wrap="wrap" mt={4} justifyContent="flex-start">
+      <Flex wrap="wrap" justifyContent="center" alignItems="center" p={8}>
         {hours.map((hour, index) => (
           <Box key={hour} borderWidth="1px" borderRadius="lg" overflow="hidden" m={2} p={4} w={["100%", "30%"]}
             bg="gray.100" boxShadow="md"
             _hover={{ transform: 'scale(1.05)', transition: 'transform 0.2s ease-in-out' }}>
-            <VStack spacing={4}>
+            <VStack spacing={4} alignItems="center">
               <Heading as="h3" size="md">{formatHour(hour)}</Heading>
               <Text>Printer: {printers[index % printers.length]}</Text>
               <Text>{randomNames[index % randomNames.length]}@vanderbilt.edu</Text>
@@ -65,7 +70,7 @@ const ManageReservations = () => {
             Select an option below.
           </ModalBody>
 
-          <ModalFooter>
+          <ModalFooter justifyContent="center">
             <Button colorScheme="blue" mr={3} onClick={onClose}>
               Update Reservation
             </Button>
@@ -75,6 +80,7 @@ const ManageReservations = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Footer />
     </Box>
   );
 };
