@@ -19,7 +19,7 @@ const StudentLanding = () => {
           <Text fontSize="lg">
             Use the Calendar to reserve a 3D printer for your project.
           </Text>
-          <Link href='/time-selection' color='blue.400' _hover={{ color: 'blue.500' }}>
+          <Link href='/printers' color='blue.400' _hover={{ color: 'blue.500' }}>
             <Button colorScheme="blue" size="lg">
               Make a Reservation
             </Button>
