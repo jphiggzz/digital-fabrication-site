@@ -1,3 +1,13 @@
+# Digital Fabrication Lab Reservation System
+
+## What We're Making
+The client for our project is Professor Florian and the Digital Fabrication Lab at Vanderbilt University. The Digital Fabrication Lab is a new lab at Vanderbilt that centres around additive manufacturing methods like filament, resin, and powder printing. A current issue that the lab is facing is an overwhelming amount of students trying to use a limited amount of resources. Because of this, students may have to wait days before being able to use the equipment. Our group wants to create a central hub for students to reserve printer times, and for professors to manage and track the usage of their printers.
+
+## Technical Framework
+Our team plans to build our application using React and express.js for our web app framework. Additionally, we plan to use firebase for our backend, and Vercel for deployment and continous integration and development.
+
+## Next.js Instructions
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
