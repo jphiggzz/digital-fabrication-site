@@ -1,6 +1,8 @@
 {
   "ExpandedNodes": [
     "",
+    "\\components",
+    "\\firebase",
     "\\pages"
   ],
   "SelectedNode": "\\pages\\printers.tsx",
