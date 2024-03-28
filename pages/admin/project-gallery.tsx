@@ -13,9 +13,9 @@ const projects = [
 
 const AdminProjectGalleryPage = () => {
   return (
-    <Box height="100vh" display="flex" flexDirection="column">
+    <Box height="100vh" display="flex" flexDirection="column" bg="gray.100">
         <AdminHeader />
-        <Box p={8} maxW="container.md" mx="auto" flexGrow={1} display="flex" flexDirection="column" bg="gray.100">
+        <Box p={8} maxW="container.md" mx="auto" flexGrow={1} display="flex" flexDirection="column">
           <Heading as="h1" mb={4}>
               Admin Project Gallery
           </Heading>
