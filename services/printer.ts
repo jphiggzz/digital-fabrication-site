@@ -1,48 +1,34 @@
 import { Printer } from '@/types/Printer';
-import db from '@/firebase/firestore';
-import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
+
+import {updateDoc, deleteDoc, addDoc} from 'firebase/firestore';
+
+import {printersCollection, printersDoc} from "@/firebase/firestore/collections/printers";
 
 // Reference to the printers collection in Firestore
-const printerCollectionRef = collection(db, 'printers');
 
 // Creates a new printer in the database
-export const addPrinter = async (printer: Omit<Printer, 'id'>): Promise<Printer> => {
-    const newPrinterRef = doc(printerCollectionRef);
-    const newPrinter: Printer = {
-        id: newPrinterRef.id,
-        ...printer,
-        imageUrl: 'https://example.com/default-image.jpg' // Set a default image URL
-    };
-    await setDoc(newPrinterRef, newPrinter);
-    return newPrinter;
-};
-
-// Get a single printer by id
-export const getPrinter = async (id: string): Promise<Printer | undefined> => {
-    const printerRef = doc(db, 'printers', id);
-    const printerSnap = await getDoc(printerRef);
-    // If the printer exists, return it; otherwise, return undefined
-    if (printerSnap.exists()) {
-        return printerSnap.data() as Printer;
-    } else {
-        return undefined;
-    }
-};
-
-// Get all printers
-export const getPrinters = async (): Promise<Printer[]> => {
-    const snapshot = await getDocs(printerCollectionRef);
-    return snapshot.docs.map(doc => doc.data() as Printer);
-};
+export const addPrinter = async (printer: Omit<Printer, 'id'>): Promise<boolean> =>
+    addDoc(printersCollection, printer)
+        .then(() => {return true;})
+        .catch((error) => {
+            console.error('Error adding document: ', error);
+            return false;
+        });
 
 // Update a printer
-export const updatePrinter = async (id: string, printer: Partial<Printer>): Promise<void> => {
-    const printerRef = doc(db, 'printers', id);
-    await updateDoc(printerRef, printer);
-};
+export const updatePrinter = async (id: string, printer: Partial<Omit<Printer, "id">>): Promise<boolean> =>
+    updateDoc(printersDoc(id), printer)
+        .then(() => {return true;})
+        .catch((error) => {
+            console.error('Error updating document: ', error);
+            return false;
+        })
 
 // Delete a printer
-export const deletePrinter = async (id: string): Promise<void> => {
-    const printerRef = doc(db, 'printers', id);
-    await deleteDoc(printerRef);
-};
+export const deletePrinter = async (id: string): Promise<boolean> =>
+    deleteDoc(printersDoc(id))
+        .then(() => {return true;})
+        .catch((error) => {
+            console.error('Error deleting document: ', error);
+            return false;
+        })

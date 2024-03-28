@@ -1,6 +1,6 @@
 import { Box, Heading, SimpleGrid, Text, Link, Button } from '@chakra-ui/react';
-import AdminHeader from '@/components/AdminHeader';
-import Footer from '@/components/Footer';
+
+import Layout from "@/components/layout";
 
 const resources = [
   { title: 'Resource 1', link: 'https://www.example.com/resource1', description: 'Description of Resource 1' },
@@ -10,9 +10,10 @@ const resources = [
 
 const AdminResourcesPage = () => {
   return (
-    <Box height="100vh" display="flex" flexDirection="column">
-        <AdminHeader />
-        <Box p={8} maxW="container.md" mx="auto" flexGrow={1} display="flex" flexDirection="column" bg="gray.100">
+    <Layout
+        isAdmin
+    >
+        <Box p={8} maxW="container.md" mx="auto" flexGrow={1} display="flex" flexDirection="column">
         <Heading as="h1" mb={4}>
             Admin Resources
         </Heading>
@@ -35,8 +36,7 @@ const AdminResourcesPage = () => {
             Add Resource
         </Button>
         </Box>
-        <Footer />
-    </Box>
+    </Layout>
   );
 };
 

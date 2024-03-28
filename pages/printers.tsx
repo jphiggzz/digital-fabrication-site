@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Box, Heading, SimpleGrid, Image, Text, Button, Input, Flex } from '@chakra-ui/react';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import { Form3, Form3L, Fuse1, MakerGearM3, SintratecKit, Voron } from '@/assets/printer-photos';
+
 import { useRouter } from 'next/router';
+
+import { Box, Heading, SimpleGrid, Image, Text, Button, Input, Flex } from '@chakra-ui/react';
+
+import { Form3, MakerGearM3, Voron } from '@/assets/printer-photos';
+import Layout from "@/components/layout";
+
 
 //printer data structure
 interface Printer {
@@ -34,8 +37,7 @@ const PrintersPage = () => {
     };
 
     return (
-        <Box height="100vh" display="flex" flexDirection="column" bg="gray.100">
-            <Navbar />
+        <Layout>
             <Box p={8}>
                 <Heading as="h1" mb={4}>
                     Select a printer:
@@ -92,8 +94,7 @@ const PrintersPage = () => {
                     </Button>
                 )}
             </Box>
-            <Footer />
-        </Box>
+        </Layout>
     );
 };
 
