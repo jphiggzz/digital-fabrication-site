@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
+
 import {
   Box, Heading, Text, Button, useDisclosure,
   Modal, ModalOverlay, ModalContent, ModalHeader,
   ModalFooter, ModalBody, ModalCloseButton, Flex, VStack
 } from '@chakra-ui/react';
-import Footer from '@/components/Footer';
+
 import AdminHeader from '@/components/AdminHeader';
+import Layout from "@/components/layout";
 
 const getRandomHours = () => {
   const hours = [];
@@ -39,8 +41,9 @@ const ManageReservations = () => {
   }).format(new Date());
 
   return (
-    <Box minHeight="100vh" display="flex" flexDirection="column" bg="gray.50">
-      <AdminHeader />
+    <Layout
+      isAdmin
+    >
       <Box p={8}  >
         <Heading as="h1" size="lg" textAlign="center">{`Reservations for ${formattedDate}`}</Heading>
         <Text mt={2} textAlign="center">Click on a time slot to manage or delete the reservation.</Text>
@@ -80,8 +83,7 @@ const ManageReservations = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Footer />
-    </Box>
+    </Layout>
   );
 };
 

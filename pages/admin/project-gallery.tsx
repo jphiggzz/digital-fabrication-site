@@ -1,21 +1,12 @@
-import { Box, Heading, SimpleGrid, Image, Text, Link, Button } from '@chakra-ui/react';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import { Boat, CupHolder, Dinosaur } from '@/assets/gallery-photos';
-import AdminHeader from '@/components/AdminHeader';
+import React from 'react';
 
-// sample data for projects
-const projects = [
-  { title: 'Boat', imageUrl: Boat.src, description: 'Edit this Print' },
-  { title: 'Cup Holder', imageUrl: CupHolder.src, description: 'Edit this Print' },
-  { title: 'Dinosaur', imageUrl: Dinosaur.src, description: 'Edit this Print' },
-];
+import ProjectGallery from "@/components/projectGallery";
 
 const AdminProjectGalleryPage = () => {
   return (
-    <Box height="100vh" display="flex" flexDirection="column" bg="gray.100">
+    <Box height="100vh" display="flex" flexDirection="column">
         <AdminHeader />
-        <Box p={8} maxW="container.md" mx="auto" flexGrow={1} display="flex" flexDirection="column">
+        <Box p={8} maxW="container.md" mx="auto" flexGrow={1} display="flex" flexDirection="column" bg="gray.100">
           <Heading as="h1" mb={4}>
               Admin Project Gallery
           </Heading>
