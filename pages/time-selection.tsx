@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-
 import { getSession } from 'next-auth/react';
-
 import {
   Box,
   Heading,
@@ -18,7 +16,11 @@ import {
   Button,
   useToast,
 } from '@chakra-ui/react';
-import Layout from "@/components/layout";
+
+// This file is a page that allows a student to select a 
+// time window for a 3D printer reservation.
+// Currently creates a GCal event on March 20th for demonstration purposes.
+// ** STILL BROKEN MIGHT SCRAP **
 
 interface TimeWindow {
   id: number;
@@ -108,51 +110,49 @@ const TimeSelection = () => {
   };
 
   return (
-      <Layout>
-        <Box p={8} maxW="container.md" mx="auto">
-          <Heading mb={4}>Select a Time Window</Heading>
-          <Text fontSize="md" mb={6}>
-            This sucks but it will make an event on your personal Google Calendar for March 20 if you wanna check.
-          </Text>
-          <SimpleGrid columns={{ sm: 2, md: 3 }} spacing={5}>
-            {timeWindows.map((timeWindow) => (
-              <Box
-                key={timeWindow.id}
-                p={5}
-                shadow="md"
-                borderWidth="1px"
-                borderRadius="lg"
-                _hover={{ bg: 'blue.100', cursor: 'pointer' }}
-                onClick={() => handleSelectTimeWindow(timeWindow)}
-              >
-                {timeWindow.label}
-              </Box>
-            ))}
-          </SimpleGrid>
+    <Box p={8} maxW="container.md" mx="auto">
+      <Heading mb={4}>Select a Time Window</Heading>
+      <Text fontSize="md" mb={6}>
+        This sucks but it will make an event on your personal Google Calendar for March 20 if you wanna check.
+      </Text>
+      <SimpleGrid columns={{ sm: 2, md: 3 }} spacing={5}>
+        {timeWindows.map((timeWindow) => (
+          <Box
+            key={timeWindow.id}
+            p={5}
+            shadow="md"
+            borderWidth="1px"
+            borderRadius="lg"
+            _hover={{ bg: 'blue.100', cursor: 'pointer' }}
+            onClick={() => handleSelectTimeWindow(timeWindow)}
+          >
+            {timeWindow.label}
+          </Box>
+        ))}
+      </SimpleGrid>
 
-          {/* Modal to show selected time window and confirm event creation */}
-          <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Confirm Your Time Window</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                {selectedTimeWindow ? (
-                  <Text>You have selected: {selectedTimeWindow.label}. Do you want to create this event?</Text>
-                ) : (
-                  <Text>No time window selected.</Text>
-                )}
-              </ModalBody>
-              <ModalFooter>
-                <Button colorScheme="blue" mr={3} onClick={handleCreateEvent}>
-                  Confirm
-                </Button>
-                <Button variant="ghost" onClick={onClose}>Cancel</Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-        </Box>
-      </Layout>
+      {/* Modal to show selected time window and confirm event creation */}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirm Your Time Window</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedTimeWindow ? (
+              <Text>You have selected: {selectedTimeWindow.label}. Do you want to create this event?</Text>
+            ) : (
+              <Text>No time window selected.</Text>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleCreateEvent}>
+              Confirm
+            </Button>
+            <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </Box>
   );
 };
 

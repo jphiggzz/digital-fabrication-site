@@ -9,7 +9,7 @@ import {
 
 import firestore from "@/firebase/firestore";
 
-import {PRINTER_COLLECTION} from "@/firebase/firestore/collectionNames";
+import {PRINTER_COLLECTION} from "@/firebase/firestore/collections";
 
 import {Printer} from "@/types/Printer";
 
@@ -17,7 +17,7 @@ import {Printer} from "@/types/Printer";
 // converts a course document to a Course object, allowing for typed queries and strict type checking
 const courseConverter: FirestoreDataConverter<Printer> = {
     toFirestore(printer: WithFieldValue<Printer>): DocumentData {
-        return { id: printer.id, name: printer.name, description: printer.description, imageUrl: printer.imageUrl };
+        return { id: printer.id, name: printer.name, description: printer.description, numAvailable: printer.numReviews };
     },
     fromFirestore(
         snapshot: QueryDocumentSnapshot,
@@ -28,7 +28,7 @@ const courseConverter: FirestoreDataConverter<Printer> = {
             id: data.id,
             name: data.name,
             description: data.description,
-            imageUrl: data.imageUrl
+            numAvailable: data.numReviews
         };
     },
 };

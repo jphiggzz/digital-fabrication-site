@@ -5,7 +5,7 @@ import { TimeSlot } from './TimeSlot';
 // the student's name and email 
 // and the printer's ID and name
 
-export interface Reservation extends TimeSlot {
+export interface Reservation extends TimeSlot{
     studentName: string; // Name of the student who reserved the slot
     studentEmail: string; // Email of the student who reserved the slot
     printerId: string; // ID of the printer reserved

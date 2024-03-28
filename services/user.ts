@@ -1,33 +1,47 @@
-import {updateDoc, deleteDoc, addDoc} from 'firebase/firestore';
-
-import {usersCollection, usersDoc} from "@/firebase/firestore/collections/users";
-
+import db from '@/firebase/firestore/index'; // Adjust this path as per your project structure
+import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { User } from '@/types/User';
 
+// Reference to the users collection in Firestore
+const userCollectionRef = collection(db, 'users');
 
 // Create a new user
-export const addUser = async (user: Omit<User, 'id'>): Promise<boolean> =>
-    addDoc(usersCollection, user)
-        .then(() => {return true;})
-        .catch((error) => {
-            console.error('Error adding document: ', error);
-            return false;
-        });
+export const addUser = async (user: Omit<User, 'id'>): Promise<User> => {
+    const newUserRef = doc(userCollectionRef);
+    const newUser: User = {
+        id: newUserRef.id,
+        ...user
+    };
+    await setDoc(newUserRef, newUser);
+    return newUser;
+};
+
+// Get a single user by id
+export const getUser = async (id: string): Promise<User | undefined> => {
+    const userRef = doc(db, 'users', id);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+        return userSnap.data() as User;
+    } else {
+        return undefined;
+    }
+};
+
+// Get all users
+export const getUsers = async (): Promise<User[]> => {
+    const snapshot = await getDocs(userCollectionRef);
+    return snapshot.docs.map(doc => doc.data() as User);
+};
 
 // Update a user
-export const updateUser = async (id: string, user: Partial<User>): Promise<boolean> =>
-    updateDoc(usersDoc(id), user)
-        .then(() => {return true;})
-        .catch((error) => {
-            console.error('Error updating document: ', error);
-            return false;
-        });
+export const updateUser = async (id: string, user: Partial<User>): Promise<void> => {
+    const userRef = doc(db, 'users', id);
+    await updateDoc(userRef, user);
+};
 
 // Delete a user
-export const deleteUser = async (id: string): Promise<boolean> =>
-    deleteDoc(usersDoc(id))
-        .then(() => {return true;})
-        .catch((error) => {
-            console.error('Error deleting document: ', error);
-            return false;
-        });
+export const deleteUser = async (id: string): Promise<void> => {
+    const userRef = doc(db, 'users', id);
+    await deleteDoc(userRef);
+};

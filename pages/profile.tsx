@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Heading, SimpleGrid, Image, Text, Button, Input, Flex } from '@chakra-ui/react';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import { useRouter } from 'next/router';
-import Layout from "@/components/layout";
 
 //User data structure
 interface User {
@@ -32,7 +33,8 @@ const ProfilesPage = () => {
     };
 
     return (
-        <Layout>
+        <Box height="100vh" display="flex" flexDirection="column" bg="gray.100">
+            <Navbar />
             <Box p={8}>
                 <Heading as="h1" mb={4}>
                     {selectedUser ? selectedUser.name : 'No User Selected'}
@@ -47,7 +49,8 @@ const ProfilesPage = () => {
                     <Button colorScheme="red" mt="4" onClick={handleCancel}>Cancel</Button>
                 </Box>
             </Box>
-        </Layout>
+            <Footer />
+        </Box>
     );
 };
 

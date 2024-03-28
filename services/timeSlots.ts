@@ -1,32 +1,47 @@
-import {updateDoc, deleteDoc, addDoc} from 'firebase/firestore';
-
+import db from '@/firebase/firestore/index'; // Adjust this path as per your project structure
+import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { TimeSlot } from '@/types/TimeSlot';
 
-import {timeSlotsCollection, timeSlotsDoc} from "@/firebase/firestore/collections/timeSlots";
+// Reference to the timeslots collection in Firestore
+const timeSlotCollectionRef = collection(db, 'timeslots');
 
 // Create a new timeslot
-export const addTimeSlot = async (timeSlot: Omit<TimeSlot, 'id'>): Promise<boolean> =>
-    addDoc(timeSlotsCollection, timeSlot)
-        .then(() => {return true;})
-        .catch((error) => {
-            console.error('Error adding document: ', error);
-            return false;
-        });
+export const addTimeSlot = async (timeSlot: Omit<TimeSlot, 'id'>): Promise<TimeSlot> => {
+    const newTimeSlotRef = doc(timeSlotCollectionRef);
+    const newTimeSlot: TimeSlot = {
+        id: newTimeSlotRef.id,
+        ...timeSlot
+    };
+    await setDoc(newTimeSlotRef, newTimeSlot);
+    return newTimeSlot;
+};
+
+// Get a single timeslot by id
+export const getTimeSlot = async (id: string): Promise<TimeSlot | undefined> => {
+    const timeSlotRef = doc(db, 'timeslots', id);
+    const timeSlotSnap = await getDoc(timeSlotRef);
+
+    if (timeSlotSnap.exists()) {
+        return timeSlotSnap.data() as TimeSlot;
+    } else {
+        return undefined;
+    }
+};
+
+// Get all timeslots
+export const getTimeSlots = async (): Promise<TimeSlot[]> => {
+    const snapshot = await getDocs(timeSlotCollectionRef);
+    return snapshot.docs.map(doc => doc.data() as TimeSlot);
+};
 
 // Update a timeslot
-export const updateTimeSlot = async (id: string, timeSlot: Partial<TimeSlot>): Promise<boolean> =>
-    updateDoc(timeSlotsDoc(id), timeSlot)
-        .then(() => {return true;})
-        .catch((error) => {
-            console.error('Error updating document: ', error);
-            return false;
-        });
+export const updateTimeSlot = async (id: string, timeSlot: Partial<TimeSlot>): Promise<void> => {
+    const timeSlotRef = doc(db, 'timeslots', id);
+    await updateDoc(timeSlotRef, timeSlot);
+};
 
 // Delete a timeslot
-export const deleteTimeSlot = async (id: string): Promise<boolean> =>
-    deleteDoc(timeSlotsDoc(id))
-        .then(() => {return true;})
-        .catch((error) => {
-            console.error('Error deleting document: ', error);
-            return false;
-        });
+export const deleteTimeSlot = async (id: string): Promise<void> => {
+    const timeSlotRef = doc(db, 'timeslots', id);
+    await deleteDoc(timeSlotRef);
+};

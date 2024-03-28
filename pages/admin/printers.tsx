@@ -1,30 +1,11 @@
 import React, { useState } from 'react';
-
-import {
-    Box,
-    Heading,
-    SimpleGrid,
-    Image,
-    Text,
-    Button,
-    Input,
-    Flex,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    useDisclosure
-} from '@chakra-ui/react';
-
+import { Box, Heading, SimpleGrid, Image, Text, Button, Input, Flex, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from '@chakra-ui/react';
+import AdminHeader from '@/components/AdminHeader'; // Assuming AdminHeader exists
+import Footer from '@/components/Footer';
 import { useRouter } from 'next/router';
-
-import AdminHeader from '@/components/AdminHeader';
-
 import { Form3, MakerGearM3, Voron } from '@/assets/printer-photos';
-import {addPrinter} from "@/services/printer";
-import Layout from "@/components/layout";
+import { collection, addDoc } from 'firebase/firestore';
+import db from '@/firebase/firestore/index';
 
 // Printer data structure
 interface Printer {
@@ -42,7 +23,6 @@ const printers: Printer[] = [
 ];
 
 const PrintersPage = () => {
-
     const router = useRouter();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedPrinter, setSelectedPrinter] = useState<Printer | null>(null);
@@ -57,9 +37,36 @@ const PrintersPage = () => {
         router.push('/time-selection');
     };
 
-    // const handleAddPrinter = async () => {
-    //     await addPrinter(newPrinterInfo);
-    // };
+    const handleAddPrinter = async () => {
+        try {
+            console.log('Before adding printer');
+          // Reference to the "printers" collection in Firestore
+          const collectionRef = collection(db, 'printers');
+            console.log('After adding printer');
+          // Create a new printer object with the form data
+          const newPrinter = {
+            name: newPrinterInfo.name,
+            description: newPrinterInfo.description,
+            // Add other relevant fields for the printer
+          };
+          try   {
+            console.log('Before adding printer');
+            const docRef = await addDoc(collectionRef, newPrinter);
+            } catch (error) {   
+            console.error('Error adding printer: ', error);
+            }
+          // Write the new printer to Firestore
+        console.log('New printer added with ID: ');
+    
+          // Clear the form fields after successful submission
+          setNewPrinterInfo({ name: '', description: '', image: null });
+    
+          // Close the modal
+          onClose();
+        } catch (error) {
+          console.error('Error adding printer: ', error);
+        }
+      };
     
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,9 +90,8 @@ const PrintersPage = () => {
     };
 
     return (
-        <Layout
-            isAdmin
-        >
+        <Box minHeight="100vh" display="flex" flexDirection="column" bg="gray.100">
+            <AdminHeader />
             <Box p={8} flex="1">
                 <Heading as="h1" mb={4}>
                     Select a printer:
@@ -99,11 +105,7 @@ const PrintersPage = () => {
                         </Box>
                     ))}
                 </SimpleGrid>
-                <Button
-                    mt={4}
-                    colorScheme="blue"
-                    // onClick={handleAddPrinter}
-                >
+                <Button mt={4} colorScheme="blue" onClick={handleAddPrinter}>
                     Add Printer
                 </Button>
                 {selectedPrinter && (
@@ -142,6 +144,7 @@ const PrintersPage = () => {
                     </Button>
                 )}
             </Box>
+            <Footer />
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
@@ -175,7 +178,7 @@ const PrintersPage = () => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </Layout>
+        </Box>
     );
 };
 
