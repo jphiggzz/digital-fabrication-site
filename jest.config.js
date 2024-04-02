@@ -4,6 +4,7 @@ module.exports = {
     moduleNameMapper: {
       '^@/assets/(.*)$': '<rootDir>/assets/$1',
       '^@/pages/(.*)$': '<rootDir>/pages/$1',
+      '^@/services/(.*)$': '<rootDir>/services/$1',
       '^@/components/(.*)$': '<rootDir>/components/$1',
       '^@/firebase/(.*)$': '<rootDir>/firebase/$1',
     },
