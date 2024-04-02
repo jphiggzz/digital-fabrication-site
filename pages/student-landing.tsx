@@ -4,9 +4,6 @@ import { Link } from '@chakra-ui/next-js';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
-{ /* Landing page for students, currently only has reserve timeslot */}
-{/*     but will eventually link to project gallery and info        */}
-
 const StudentLanding = () => {
   return (
     <Box height="100vh" display="flex" flexDirection="column" bg="gray.100">
