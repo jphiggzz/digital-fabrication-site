@@ -1,159 +1,130 @@
 import React, { useState } from 'react';
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import {
-  Box,
-  Heading,
-  SimpleGrid,
-  Text,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-  Button,
-  useToast,
+    Box, Button, Flex, Heading, Input, Text, VStack, IconButton, Stack, Image, FormControl, FormLabel, Select
 } from '@chakra-ui/react';
+import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import { format, parseISO, isWithinInterval, addDays, subDays, differenceInCalendarDays } from 'date-fns';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { GetServerSidePropsContext } from 'next';
 
-// This file is a page that allows a student to select a 
-// time window for a 3D printer reservation.
-// Currently creates a GCal event on March 20th for demonstration purposes.
-// ** STILL BROKEN MIGHT SCRAP **
-
-interface TimeWindow {
-  id: number;
-  label: string;
-  startDateTime: string; // ISO string for start time
-  endDateTime: string; // ISO string for end time
+interface Printer {
+    name: string;
+    imageUrl: string;
+    status: string;
 }
 
+interface Event {
+    id: number;
+    user: string;
+    startTime: Date;
+    endTime: Date;
+    printer: Printer;
+    description: string;
+}
+
+const printers: Printer[] = [
+    // Add the correct path to your images or use URLs
+    { name: 'Voron', imageUrl: '/images/Voron.jpg', status: 'Available' },
+    { name: 'MakerGear M3', imageUrl: '/images/MakerGearM3.jpg', status: 'In Use' },
+    { name: 'Form 3', imageUrl: '/images/Form3.jpg', status: 'Available' },
+];
+
+const initialEvents: Event[] = [
+    // Assuming starting with some events
+    // Dates need to be adjusted or dynamically set
+];
+
 const TimeSelection = () => {
-  // Add start and end ISO strings for each time window for simplicity
-  const timeWindows: TimeWindow[] = [
-    { id: 1, label: '9:00 AM - 10:00 AM', startDateTime: '2024-03-20T09:00:00-07:00', endDateTime: '2024-03-20T10:00:00-07:00' },
-    { id: 2, label: '10:00 AM - 11:00 AM', startDateTime: '2024-03-20T10:00:00-07:00', endDateTime: '2024-03-20T11:00:00-07:00' },
-  ];
+    const { data: session } = useSession();
+    const [events, setEvents] = useState<Event[]>(initialEvents);
+    const [selectedDay, setSelectedDay] = useState(new Date());
+    const [newEventDetails, setNewEventDetails] = useState({ description: '', startTime: '', endTime: '', printerName: printers[0].name });
+    const today = new Date();
+    const maxDay = addDays(today, 7); // Limit up to 7 days from today
 
-  const [selectedTimeWindow, setSelectedTimeWindow] = useState<TimeWindow | null>(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
-
-  const handleSelectTimeWindow = (timeWindow: TimeWindow) => {
-    setSelectedTimeWindow(timeWindow);
-    onOpen(); // Open the modal
-  };
-
-  const handleCreateEvent = async () => {
-    if (!selectedTimeWindow) return;
-
-    // Here, you'd fetch the session to get the access token
-    // For demonstration, this is a mocked process
-    const session = await getSession();
-    const accessToken = session?.accessToken; // Assuming your session object has an accessToken
-
-    if (!accessToken) {
-      toast({
-        title: 'Error',
-        description: 'You must be logged in to create an event.',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    const eventDetails = {
-      summary: '3D Printer Reservation',
-      start: {
-        dateTime: selectedTimeWindow.startDateTime,
-        timeZone: 'America/Los_Angeles',
-      },
-      end: {
-        dateTime: selectedTimeWindow.endDateTime,
-        timeZone: 'America/Los_Angeles',
-      },
+    const handleDayChange = (direction: 'next' | 'prev') => {
+        setSelectedDay(prev => {
+            const newDay = direction === 'next' ? addDays(prev, 1) : subDays(prev, 1);
+            if (direction === 'next' && differenceInCalendarDays(newDay, today) > 7) return prev; // Prevent going beyond 7 days
+            if (direction === 'prev' && newDay < today) return prev; // Prevent going before today
+            return newDay;
+        });
     };
 
-    try {
-      const response = await fetch('/api/calendar/create-event', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          accessToken,
-          event: eventDetails,
-        }),
-      });
+    const addNewEvent = () => {
+        const { description, startTime, endTime, printerName } = newEventDetails;
+        const startDateTime = parseISO(startTime);
+        const endDateTime = parseISO(endTime);
+        const printer = printers.find(p => p.name === printerName);
 
-      if (!response.ok) throw new Error('Failed to create calendar event');
+        if (!printer) return; // Handle error appropriately
 
-      onClose(); // Close the modal on success
-      toast({
-        title: 'Event Created',
-        description: 'Your reservation has been added to the calendar.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'There was an issue creating your event.',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
-    }
-  };
+        // Example check for time conflicts
+        const hasConflict = events.some(event =>
+            isWithinInterval(startDateTime, { start: event.startTime, end: event.endTime }) ||
+            isWithinInterval(endDateTime, { start: event.startTime, end: event.endTime })
+        );
 
-  return (
-    <Box p={8} maxW="container.md" mx="auto">
-      <Heading mb={4}>Select a Time Window</Heading>
-      <Text fontSize="md" mb={6}>
-        This sucks but it will make an event on your personal Google Calendar for March 20 if you wanna check.
-      </Text>
-      <SimpleGrid columns={{ sm: 2, md: 3 }} spacing={5}>
-        {timeWindows.map((timeWindow) => (
-          <Box
-            key={timeWindow.id}
-            p={5}
-            shadow="md"
-            borderWidth="1px"
-            borderRadius="lg"
-            _hover={{ bg: 'blue.100', cursor: 'pointer' }}
-            onClick={() => handleSelectTimeWindow(timeWindow)}
-          >
-            {timeWindow.label}
-          </Box>
-        ))}
-      </SimpleGrid>
+        if (hasConflict) {
+            alert("Event time overlaps with an existing event.");
+            return;
+        }
 
-      {/* Modal to show selected time window and confirm event creation */}
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Confirm Your Time Window</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {selectedTimeWindow ? (
-              <Text>You have selected: {selectedTimeWindow.label}. Do you want to create this event?</Text>
-            ) : (
-              <Text>No time window selected.</Text>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleCreateEvent}>
-              Confirm
-            </Button>
-            <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Box>
-  );
+        const newEvent: Event = {
+            id: events.length + 1, // Simplistic approach for example
+            user: session?.user?.name || 'Anonymous',
+            startTime: startDateTime,
+            endTime: endDateTime,
+            printer: printer,
+            description: description
+        };
+
+        setEvents([...events, newEvent]);
+        setNewEventDetails({ description: '', startTime: '', endTime: '', printerName: printers[0].name });
+    };
+
+    return (
+        <Box height="100vh" display="flex" flexDirection="column">
+            <Navbar />
+            <Flex flex="1" p="4" overflowY="auto" alignItems="start">
+                <VStack flex="1" spacing="4" alignItems="stretch">
+                    <Heading size="md" textAlign="center">Events on {format(selectedDay, 'PPP')}</Heading>
+                    <Stack direction="row" justifyContent="center" mb={4}>
+                        <IconButton aria-label="Previous day" icon={<ArrowBackIcon />} onClick={() => handleDayChange('prev')} isDisabled={selectedDay <= today} />
+                        <IconButton aria-label="Next day" icon={<ArrowForwardIcon />} onClick={() => handleDayChange('next')} isDisabled={differenceInCalendarDays(maxDay, selectedDay) <= 0} />
+                    </Stack>
+                    {/* Events list */}
+                </VStack>
+                <Flex flex="1" flexDirection="column" ml="4">
+                    <Heading size="md">Add New Event</Heading>
+                    <FormControl>
+                        <FormLabel>Description</FormLabel>
+                        <Input value={newEventDetails.description} onChange={(e) => setNewEventDetails({ ...newEventDetails, description: e.target.value })} />
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel>Start Time</FormLabel>
+                        <Input type="datetime-local" value={newEventDetails.startTime} onChange={(e) => setNewEventDetails({ ...newEventDetails, startTime: e.target.value })} />
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel>End Time</FormLabel>
+                        <Input type="datetime-local" value={newEventDetails.endTime} onChange={(e) => setNewEventDetails({ ...newEventDetails, endTime: e.target.value })} />
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel>Printer</FormLabel>
+                        <Select onChange={(e) => setNewEventDetails({ ...newEventDetails, printerName: e.target.value })} placeholder="Select printer">
+                            {printers.map((printer, index) => (
+                                <option key={index} value={printer.name}>{printer.name}</option>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <Button mt="4" colorScheme="blue" onClick={addNewEvent}>Add Event</Button>
+                </Flex>
+            </Flex>
+            <Footer />
+        </Box>
+    );
 };
 
 export default TimeSelection;
