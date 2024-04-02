@@ -19,6 +19,15 @@ module.exports = {
       'components/**/*.ts',
       'components/**/*.tsx',
       '!components/**/*.d.ts',
+      'services/**/*.ts',
+      'services/**/*.tsx',
+      '!services/**/*.d.ts',
+      'firebase/**/*.ts',
+      'firebase/**/*.tsx',
+      '!firebase/**/*.d.ts',
+      'pages/**/*.ts',
+      'pages/**/*.tsx',
+      '!pages/**/*.d.ts',
     ],
   };
   
