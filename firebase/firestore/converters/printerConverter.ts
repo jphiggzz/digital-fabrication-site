@@ -14,10 +14,9 @@ import {PRINTER_COLLECTION} from "@/firebase/firestore/collections";
 import {Printer} from "@/types/Printer";
 
 
-// converts a course document to a Course object, allowing for typed queries and strict type checking
 const courseConverter: FirestoreDataConverter<Printer> = {
     toFirestore(printer: WithFieldValue<Printer>): DocumentData {
-        return { id: printer.id, name: printer.name, description: printer.description, numAvailable: printer.numReviews };
+        return { id: printer.id, name: printer.name, description: printer.description };
     },
     fromFirestore(
         snapshot: QueryDocumentSnapshot,
