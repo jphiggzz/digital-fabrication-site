@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getSession, useSession } from 'next-auth/react';
 import {
     Box, Button, Flex, Heading, Input, Text, VStack, IconButton, Stack, Image, FormControl, FormLabel, Select
@@ -7,28 +7,19 @@ import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { format, parseISO, isWithinInterval, addDays, subDays, differenceInCalendarDays } from 'date-fns';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { GetServerSidePropsContext } from 'next';
+import { Event } from '@/types/Event';
+import { Printer } from '@/types/Printer';
+import { getEvents } from '../services/events';
+import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
+import db from '@/firebase/firestore/index';
+import { Timestamp } from 'firebase/firestore'
 
-interface Printer {
-    name: string;
-    imageUrl: string;
-    status: string;
-}
-
-interface Event {
-    id: number;
-    user: string;
-    startTime: Date;
-    endTime: Date;
-    printer: Printer;
-    description: string;
-}
 
 const printers: Printer[] = [
     // Add the correct path to your images or use URLs
-    { name: 'Voron', imageUrl: '/images/Voron.jpg', status: 'Available' },
-    { name: 'MakerGear M3', imageUrl: '/images/MakerGearM3.jpg', status: 'In Use' },
-    { name: 'Form 3', imageUrl: '/images/Form3.jpg', status: 'Available' },
+    { id: '1', name: 'Voron', imageUrl: '/images/Voron.jpg', description: 'Available' },
+    { id: '2', name: 'MakerGear M3', imageUrl: '/images/MakerGearM3.jpg', description: 'In Use' },
+    { id: '3', name: 'Form 3', imageUrl: '/images/Form3.jpg', description: 'Available' },
 ];
 
 const initialEvents: Event[] = [
@@ -38,7 +29,35 @@ const initialEvents: Event[] = [
 
 const TimeSelection = () => {
     const { data: session } = useSession();
-    const [events, setEvents] = useState<Event[]>(initialEvents);
+    const [events, setEvents] = useState(initialEvents);
+    const eventsCollectionRef = collection(db, "reservations");
+    const convertToTimestamp = (timestamp: Timestamp) => {
+        if (!timestamp) return null; // or a default value
+        return timestamp instanceof Timestamp ? timestamp.toDate() : timestamp;
+    };
+
+    useEffect(
+        () => {
+            // Get all reservations
+            const getEvents = async () => {
+                try {
+                    const data = await getDocs(eventsCollectionRef);
+                    const filteredData = data.docs.map((doc) => ({
+                        ...doc.data(),
+                        id: doc.id,
+                        startTime: convertToTimestamp(doc.data().startTime),
+                        endTime: convertToTimestamp(doc.data().endTime)
+                    })) as Event[]; 
+                    setEvents(filteredData);
+                    console.log(filteredData);
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+            getEvents();
+        },
+        []
+    )
     const [selectedDay, setSelectedDay] = useState(new Date());
     const [newEventDetails, setNewEventDetails] = useState({ description: '', startTime: '', endTime: '', printerName: printers[0].name });
     const today = new Date();
@@ -73,16 +92,24 @@ const TimeSelection = () => {
         }
 
         const newEvent: Event = {
-            id: events.length + 1, // Simplistic approach for example
+            id: 'lol', // Simplistic approach for example
             user: session?.user?.name || 'Anonymous',
             startTime: startDateTime,
             endTime: endDateTime,
             printer: printer,
-            description: description
         };
 
         setEvents([...events, newEvent]);
         setNewEventDetails({ description: '', startTime: '', endTime: '', printerName: printers[0].name });
+    };
+
+    const renderEvent = (event: Event) => {
+        return (
+            <Box key={event.id} borderWidth="1px" borderRadius="lg" overflow="hidden" p={4} my={2}>
+                <Text>Start: {format(new Date(event.startTime), 'PPPpp')}</Text>
+                <Text>End: {format(new Date(event.endTime), 'PPPpp')}</Text>
+            </Box>
+        );
     };
 
     return (
@@ -95,7 +122,7 @@ const TimeSelection = () => {
                         <IconButton aria-label="Previous day" icon={<ArrowBackIcon />} onClick={() => handleDayChange('prev')} isDisabled={selectedDay <= today} />
                         <IconButton aria-label="Next day" icon={<ArrowForwardIcon />} onClick={() => handleDayChange('next')} isDisabled={differenceInCalendarDays(maxDay, selectedDay) <= 0} />
                     </Stack>
-                    {/* Events list */}
+                    {events.map(event => renderEvent(event))}
                 </VStack>
                 <Flex flex="1" flexDirection="column" ml="4">
                     <Heading size="md">Add New Event</Heading>

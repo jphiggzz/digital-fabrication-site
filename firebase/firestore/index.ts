@@ -1,6 +1,5 @@
 import {getFirestore} from "@firebase/firestore";
-
-import clientApp from "../index";
+import clientApp from "..";
 
 const db = getFirestore(clientApp); //firestore instance
 

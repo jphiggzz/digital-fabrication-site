@@ -3,8 +3,11 @@
     "",
     "\\components",
     "\\firebase",
-    "\\pages"
+    "\\hooks",
+    "\\pages",
+    "\\services",
+    "\\types"
   ],
-  "SelectedNode": "\\pages\\printers.tsx",
+  "SelectedNode": "\\firebase\\config.ts",
   "PreviewInSolutionExplorer": false
 }

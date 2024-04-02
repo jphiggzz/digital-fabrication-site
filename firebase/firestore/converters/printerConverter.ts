@@ -28,7 +28,7 @@ const courseConverter: FirestoreDataConverter<Printer> = {
             id: data.id,
             name: data.name,
             description: data.description,
-            numAvailable: data.numReviews
+            imageUrl: data.imageUrl
         };
     },
 };
