@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import Header from '@/components/Header';
+import Navbar from '@/components/Navbar';
 
 describe('Header (Navbar)', () => {
   it('renders the header with navigation links and call to action', () => {
-    render(<Header />);
+    render(<Navbar />);
     expect(screen.getByText('Digital Fabrication Lab')).toBeInTheDocument();
 
     const navLinks = ['Reservations', 'Resources', 'Project Gallery'];
