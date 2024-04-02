@@ -4,7 +4,7 @@ import {
     Box, Button, Flex, Heading, Input, Text, VStack, IconButton, Stack, Image, FormControl, FormLabel, Select
 } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
-import { format, parseISO, isWithinInterval, addDays, subDays, differenceInCalendarDays } from 'date-fns';
+import { format, parseISO, isWithinInterval, addDays, subDays, differenceInCalendarDays, isBefore, isToday } from 'date-fns';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Event, formatDateToString } from '@/types/Event';
@@ -79,7 +79,16 @@ const TimeSelection = () => {
         const startDateTime = parseISO(startTime);
         const endDateTime = parseISO(endTime);
 
-        // Example check for time conflicts
+         //check for time conflicts
+        if (!isBefore(startDateTime, endDateTime)) {
+            alert("Start time must be before end time.");
+            return;
+        }
+
+        if (isBefore(startDateTime, today) && !isToday(startDateTime) ){
+            alert("Start time must be before end time.");
+            return;
+        }
         const hasConflict = events.some(event =>
             isWithinInterval(startDateTime, { start: event.startTime, end: event.endTime }) ||
             isWithinInterval(endDateTime, { start: event.startTime, end: event.endTime })
@@ -107,7 +116,7 @@ const TimeSelection = () => {
     const renderEvent = (event: Event) => {
         return (
             <Box key={event.id} borderWidth="1px" borderRadius="lg" overflow="hidden" p={4} my={2}>
-                event.id
+                <Text>{event.id} </Text>
                 <Text>Start: {event.startTime} </Text>
                 <Text>End: {event.endTime} </Text>
             </Box>
