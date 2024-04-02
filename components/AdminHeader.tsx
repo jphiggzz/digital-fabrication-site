@@ -29,7 +29,7 @@ export default function AdminHeader() {
         </HStack>
         {/* Profile Icon */}
         <Button as={Link} href="/admin/profile">
-          <Icon as={FaUserCircle} w={6} h={6} />
+          <Icon as={FaUserCircle} w={6} h={6} data-testid="profile-icon" />
         </Button>
       </Flex>
     </chakra.header>
