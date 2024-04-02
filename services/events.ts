@@ -1,20 +1,30 @@
 import db from '@/firebase/firestore/index';
-import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
-import { Event } from '@/types/Event';
+import { collection, doc, addDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
+import { Event, formatDateToString } from '@/types/Event';
 import { Printer } from '@/types/Printer'
+import { parseISO } from 'date-fns'
 
 // Reference to the events collection in Firestore
 const eventCollectionRef = collection(db, 'reservations');
 
 // Create a new reservation
-export const addEvent = async (event: Omit<Event, 'id'>): Promise<Event> => {
-    const newEventRef = doc(eventCollectionRef);
-    const newEvent: Event = {
-        id: newEventRef.id,
-        ...event
-    };
-    await setDoc(newEventRef, newEvent);
-    return newEvent;
+export const addEvent = async (newEvent: Event)  => {
+    try {
+        const startDateTime = newEvent.startTime;
+        const endDateTime = newEvent.endTime;
+
+
+
+        // Add a new document in collection "reservations"
+        const docRef = await addDoc(collection(db, "reservations"), {
+            ...newEvent, // You might want to exclude the raw startTime and endTime here
+            startTime: startDateTime,
+            endTime: endDateTime,
+        });
+        console.log("Event added successfully");
+    } catch (e) {
+        console.error("Error adding document: ", e);
+    }
 };
 
 // Get a single reservation by id

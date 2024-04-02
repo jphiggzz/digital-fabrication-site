@@ -3,11 +3,12 @@
     "",
     "\\components",
     "\\firebase",
+    "\\firebase\\firestore",
     "\\hooks",
     "\\pages",
     "\\services",
     "\\types"
   ],
-  "SelectedNode": "\\firebase\\config.ts",
+  "SelectedNode": "\\types\\Event.ts",
   "PreviewInSolutionExplorer": false
 }
