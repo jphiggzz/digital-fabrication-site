@@ -30,6 +30,7 @@ const TimeSelection = () => {
     const { data: session } = useSession();
     const [events, setEvents] = useState(initialEvents);
     const eventsCollectionRef = collection(db, "reservations");
+
     //const convertToTimestamp = (timestamp: Timestamp) => {
       //  if (!timestamp) return null; // or a default value
         //return timestamp instanceof Timestamp ? timestamp.toDate() : timestamp;
