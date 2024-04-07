@@ -3,6 +3,8 @@ import { Box, Heading, Text, Button, VStack } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/next-js';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { GetServerSideProps } from 'next';
+import { requireAuth } from '../hooks/middleware';
 
 const StudentLanding = () => {
   return (
@@ -27,5 +29,7 @@ const StudentLanding = () => {
     </Box>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = requireAuth;
 
 export default StudentLanding;

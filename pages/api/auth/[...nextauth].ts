@@ -1,6 +1,8 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { JWT } from "next-auth/jwt";
+import { db } from '@/firebase/firestore/index';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 // This is the configuration for the Google OAuth provider
 // It is used to authenticate users with Google and to obtain an access token
@@ -20,11 +22,30 @@ export default NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt({ token, account, user }) {
       // Explicitly declare the accessToken type
-      if (account && account.access_token) {
-        token.accessToken = account.access_token as string;
-      }
+          if (account && user) {
+              // Save or update user in Firestore
+              const userRef = doc(db, "users", user.id);
+              const userSnap = await getDoc(userRef);
+
+              if (!userSnap.exists()) {
+                  // New user, set additional data in Firestore
+                  await setDoc(userRef, {
+                      id: user.id,
+                      email: user.email,
+                      name: user.name,
+                      role: 'user'  // Assign default role
+                  });
+                  token.role = 'user';
+              } else {
+                  // Existing user, read role from Firestore
+                  const userData = userSnap.data();
+                  token.role = userData.role;
+              }
+
+              token.accessToken = account.access_token;
+          }
       return token;
     },
     async session({ session, token }) {

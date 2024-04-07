@@ -11,7 +11,7 @@ import { Event, formatDateToString } from '@/types/Event';
 import { Printer } from '@/types/Printer';
 import { addEvent, getEvents } from '../services/events';
 import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
-import db from '@/firebase/firestore/index';
+import { db } from '@/firebase/firestore/index';
 
 
 const printers: Printer[] = [
@@ -80,19 +80,29 @@ const TimeSelection = () => {
         const endDateTime = parseISO(endTime);
 
          //check for time conflicts
+        // Check if startDateTime is before endDateTime
         if (!isBefore(startDateTime, endDateTime)) {
             alert("Start time must be before end time.");
             return;
         }
 
-        if (isBefore(startDateTime, today) && !isToday(startDateTime) ){
-            alert("Start time must be before end time.");
+        // Ensure both start and end times are not in the past
+        if (isBefore(startDateTime, new Date()) || isBefore(endDateTime, new Date())) {
+            alert("Event times must be in the future.");
             return;
         }
-        const hasConflict = events.some(event =>
-            isWithinInterval(startDateTime, { start: event.startTime, end: event.endTime }) ||
-            isWithinInterval(endDateTime, { start: event.startTime, end: event.endTime })
-        );
+
+        // Check for time conflicts with existing events
+        const hasConflict = events.some(event => {
+            const eventStart = new Date(event.startTime);
+            const eventEnd = new Date(event.endTime);
+            return (
+                isWithinInterval(startDateTime, { start: eventStart, end: eventEnd }) ||
+                isWithinInterval(endDateTime, { start: eventStart, end: eventEnd }) ||
+                isWithinInterval(eventStart, { start: startDateTime, end: endDateTime }) ||
+                isWithinInterval(eventEnd, { start: startDateTime, end: endDateTime })
+            );
+        });
 
         if (hasConflict) {
             alert("Event time overlaps with an existing event.");

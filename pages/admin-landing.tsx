@@ -3,6 +3,8 @@ import { Box, Heading, Text, Button, VStack } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/next-js';
 import Footer from '@/components/Footer';
 import AdminHeader from '@/components/AdminHeader';
+import { GetServerSideProps } from 'next';
+import { requireAuth }  from '../hooks/middleware';
 
 const AdminLanding = () => {
   return (
@@ -27,5 +29,7 @@ const AdminLanding = () => {
     </Box>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = requireAuth;
 
 export default AdminLanding;
