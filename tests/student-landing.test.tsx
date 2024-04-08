@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import StudentLanding from '@/pages/student-landing';
+import StudentLanding from '@/pages/student/landing';
 import { ChakraProvider } from '@chakra-ui/react';
 
 describe('StudentLanding', () => {

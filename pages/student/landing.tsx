@@ -1,10 +1,10 @@
 'use client'
 import { Box, Heading, Text, Button, VStack } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/next-js';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/StudentHeader';
 import Footer from '@/components/Footer';
 import { GetServerSideProps } from 'next';
-import { useAuth } from '../hooks/authcontext';
+import { useAuth } from '../../hooks/authcontext';
 
 const StudentLanding = () => {
     const { user } = useAuth();
@@ -23,7 +23,7 @@ const StudentLanding = () => {
           <Text fontSize="lg">
             Use the Calendar to reserve a 3D printer for your project.
           </Text>
-          <Link href='/printerpage' color='blue.400' _hover={{ color: 'blue.500' }}>
+          <Link href='/student/printing' color='blue.400' _hover={{ color: 'blue.500' }}>
             <Button colorScheme="blue" size="lg">
               Make a Reservation
             </Button>

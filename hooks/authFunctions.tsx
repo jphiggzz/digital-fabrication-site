@@ -39,7 +39,7 @@ const googleSignIn = async (isAdmin = false, router: NextRouter) => {
             } else {
                 if (email.endsWith('@vanderbilt.edu')) {
                     console.log('Vanderbilt user logged in:', email);
-                    router.push('/student-landing');
+                    router.push('/student/landing');
                 } else {
                     alert('Please use a Vanderbilt University email.');
                     await signOut(auth);

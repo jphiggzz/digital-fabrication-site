@@ -1,6 +1,6 @@
 // pages/admin/project-gallery.tsx
 import { Box, Heading, SimpleGrid, Image, Text, Link, Button, useDisclosure } from '@chakra-ui/react';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/StudentHeader';
 import Footer from '@/components/Footer';
 import AdminHeader from '@/components/AdminHeader';
 import AddPrintModal from '@/components/addProjectModal'; // Ensure path is correct

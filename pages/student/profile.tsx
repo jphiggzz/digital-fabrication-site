@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Heading, SimpleGrid, Image, Text, Button, Input, Flex } from '@chakra-ui/react';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/StudentHeader';
 import Footer from '@/components/Footer';
 import { useRouter } from 'next/router';
 

@@ -1,5 +1,5 @@
 import { Box, Heading, SimpleGrid, Text, Link } from '@chakra-ui/react';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/StudentHeader';
 import Footer from '@/components/Footer';
 
 const resources = [

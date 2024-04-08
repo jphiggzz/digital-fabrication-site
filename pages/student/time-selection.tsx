@@ -5,11 +5,11 @@ import {
 } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { format, parseISO, isWithinInterval, addDays, subDays, differenceInCalendarDays, isBefore, isToday } from 'date-fns';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/StudentHeader';
 import Footer from '@/components/Footer';
 import { Event, formatDateToString } from '@/types/Event';
 import { Printer } from '@/types/Printer';
-import { addEvent, getEvents } from '../services/events';
+import { addEvent, getEvents } from '../../services/events';
 import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firestore/index';
 

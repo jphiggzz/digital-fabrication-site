@@ -5,9 +5,9 @@ import { FaUser } from 'react-icons/fa';
 const CTA = 'Go to Homepage';
 
 const data = [
-    { label: 'Reservations', href: '/printers' },
-    { label: 'Resources', href: '/resources' },
-    { label: 'Project Gallery', href: '/project-gallery' },
+    { label: 'Reservations', href: '/student/printing' },
+    { label: 'Resources', href: '/student/resources' },
+    { label: 'Project Gallery', href: '/student/project-gallery' },
 ];
 
 export default function Header() {
@@ -15,7 +15,7 @@ export default function Header() {
     <chakra.header id="header" bg="white">
           <Flex w="100%" px="6" py="5" align="center" justify="space-between">
         {/* Logo */}
-        <Link href="/student-landing">
+        <Link href="/student/landing">
           <Text fontSize="lg" fontWeight="bold">
           Digital Fabrication Lab
           </Text>

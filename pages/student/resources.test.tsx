@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ResourcesPage from '@/pages/resources';
+import ResourcesPage from '@/pages/student/resources';
 import { ChakraProvider } from '@chakra-ui/react';
 
 describe('ResourcesPage', () => {

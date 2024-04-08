@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/StudentHeader';
 
 describe('Navbar', () => {
   it('renders the header with navigation links and call to action', () => {

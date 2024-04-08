@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ProjectGalleryPage from '@/pages/project-gallery';
+import ProjectGalleryPage from '@/pages/student/project-gallery';
 import { ChakraProvider } from '@chakra-ui/react';
 
 describe('ProjectGalleryPage', () => {

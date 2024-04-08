@@ -1,5 +1,5 @@
 import { Box, Heading, SimpleGrid, Image, Text, Link } from '@chakra-ui/react';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/StudentHeader';
 import Footer from '@/components/Footer';
 import { Boat, CupHolder, Dinosaur } from '@/assets/gallery-photos';
 
