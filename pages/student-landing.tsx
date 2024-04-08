@@ -4,9 +4,14 @@ import { Link } from '@chakra-ui/next-js';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { GetServerSideProps } from 'next';
-import { requireAuth } from '../hooks/middleware';
+import { useAuth } from '../hooks/authcontext';
 
 const StudentLanding = () => {
+    const { user } = useAuth();
+
+    if (!user) {
+        return <div>Loading or not authenticated...</div>; // This will only be shown briefly
+    }
   return (
     <Box height="100vh" display="flex" flexDirection="column" bg="gray.100">
       <Navbar />
@@ -30,6 +35,5 @@ const StudentLanding = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = requireAuth;
 
 export default StudentLanding;

@@ -17,8 +17,25 @@ import {
   useColorModeValue,
   VStack
 } from '@chakra-ui/react';
+import { useAuth } from '../hooks/authcontext';
+import { NextRouter, useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const ManageCalendar = () => {
+    const { user, isAdmin } = useAuth();
+    const router = useRouter();
+
+    if (!user) {
+        return <div>Loading or not authenticated...</div>; // This will only be shown briefly
+    }
+
+    useEffect(() => {
+        if (!isAdmin) {
+            router.push('/'); // Redirect to home if not admin
+            return;
+        }
+    }, [isAdmin, router]);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedDate, setSelectedDate] = useState(new Date());
 

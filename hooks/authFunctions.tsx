@@ -31,7 +31,6 @@ const googleSignIn = async (isAdmin = false, router: NextRouter) => {
                 const adminSnap = await getDoc(adminRef);
 
                 if (adminSnap.exists()) {
-                    console.log('Admin logged in:', email);
                     router.push('/admin-landing');
                 } else {
                     alert('You are not authorized as an admin.');

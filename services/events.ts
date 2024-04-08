@@ -1,4 +1,4 @@
-import db from '@/firebase/firestore/index';
+import { db } from '@/firebase/firestore/index';
 import { collection, doc, addDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { Event, formatDateToString } from '@/types/Event';
 import { Printer } from '@/types/Printer'

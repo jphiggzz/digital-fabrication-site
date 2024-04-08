@@ -3,10 +3,25 @@ import { Box, Heading, Text, Button, VStack } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/next-js';
 import Footer from '@/components/Footer';
 import AdminHeader from '@/components/AdminHeader';
-import { GetServerSideProps } from 'next';
-import { requireAuth }  from '../hooks/middleware';
+import { useAuth } from '../hooks/authcontext';
+import { NextRouter, useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const AdminLanding = () => {
+    const { user, isAdmin } = useAuth();
+    const router = useRouter();
+
+    if (!user) {
+        return <div>Loading or not authenticated...</div>; // This will only be shown briefly
+    }
+
+    useEffect(() => {
+        if (!isAdmin) {
+            router.push('/'); // Redirect to home if not admin
+            return;
+        }
+    }, [isAdmin, router]);
+
   return (
     <Box height="100vh" display="flex" flexDirection="column" bg="gray.200">
       <AdminHeader />
@@ -29,7 +44,5 @@ const AdminLanding = () => {
     </Box>
   );
 };
-
-export const getServerSideProps: GetServerSideProps = requireAuth;
 
 export default AdminLanding;

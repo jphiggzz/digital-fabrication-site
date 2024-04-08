@@ -1,12 +1,30 @@
 import React, { useState } from 'react';
 import { Box, Button, VStack, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, FormControl, FormLabel, Input } from '@chakra-ui/react';
 import { addDoc, collection } from "firebase/firestore";
-import db from "@/firebase/firestore";
+import { db } from '@/firebase/firestore/index';
+import { useAuth } from '../hooks/authcontext';
+import { NextRouter, useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 { /* This component should be able to update the printer db  */ }
 { /* addPrinter currently broken but it should work by Thurs  */ }
 
 const ManagePrinters = () => {
+
+    const { user, isAdmin } = useAuth();
+    const router = useRouter();
+
+    if (!user) {
+        return <div>Loading or not authenticated...</div>; // This will only be shown briefly
+    }
+
+    useEffect(() => {
+        if (!isAdmin) {
+            router.push('/'); // Redirect to home if not admin
+            return;
+        }
+    }, [isAdmin, router]);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');

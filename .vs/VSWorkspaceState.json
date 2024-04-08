@@ -1,14 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-    "\\components",
     "\\firebase",
     "\\firebase\\firestore",
     "\\hooks",
     "\\pages",
+    "\\pages\\api",
+    "\\pages\\api\\auth",
+    "\\pages\\api\\calendar",
     "\\services",
     "\\types"
   ],
-  "SelectedNode": "\\components\\AdminHeader.test.tsx",
+  "SelectedNode": "\\hooks\\authFunctions.tsx",
   "PreviewInSolutionExplorer": false
 }
