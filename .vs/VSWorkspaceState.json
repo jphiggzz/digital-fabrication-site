@@ -1,16 +1,16 @@
 {
   "ExpandedNodes": [
     "",
+    "\\assets",
+    "\\assets\\printer-photos",
+    "\\components",
     "\\firebase",
     "\\firebase\\firestore",
-    "\\hooks",
     "\\pages",
-    "\\pages\\api",
-    "\\pages\\api\\auth",
-    "\\pages\\api\\calendar",
-    "\\services",
+    "\\pages\\admin",
+    "\\pages\\student",
     "\\types"
   ],
-  "SelectedNode": "\\hooks\\authFunctions.tsx",
+  "SelectedNode": "\\hooks\\authcontext.tsx",
   "PreviewInSolutionExplorer": false
 }

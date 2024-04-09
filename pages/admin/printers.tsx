@@ -1,40 +1,61 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Heading, SimpleGrid, Image, Text, Button, Input, Flex, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from '@chakra-ui/react';
 import AdminHeader from '@/components/AdminHeader'; // Assuming AdminHeader exists
 import Footer from '@/components/Footer';
 import { useRouter } from 'next/router';
-import { Form3, MakerGearM3, Voron } from '@/assets/printer-photos';
-import { collection, addDoc } from 'firebase/firestore';
-import db from '@/firebase/firestore/index';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { db, storage } from '@/firebase/firestore/index';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { v4 } from 'uuid';
 
 // Printer data structure
 interface Printer {
-    id: number;
     name: string;
-    imageUrl: string;
-    status: string;
+    description: string;
+    url: string;
 }
 
-// Sample data for printers
-const printers: Printer[] = [
-    { id: 1, name: 'Voron', imageUrl: Voron.src, status: 'Available' },
-    { id: 2, name: 'MakerGear M3', imageUrl: MakerGearM3.src, status: 'In Use' },
-    { id: 3, name: 'Form 3', imageUrl: Form3.src, status: 'Available' },
-];
+
 
 const PrintersPage = () => {
     const router = useRouter();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedPrinter, setSelectedPrinter] = useState<Printer | null>(null);
-    const [printDuration, setPrintDuration] = useState({ hours: 0, minutes: 0 });
-    const [newPrinterInfo, setNewPrinterInfo] = useState({ name: '', description: '', image: null });
+    const [newPrinterInfo, setNewPrinterInfo] = useState({ name: '', description: '', url: '' });
+    const [printerImage, setPrinterImage] = useState<string>('');
+    const initialPrinters: Printer[] = [
+    ];
+    const [printers, setPrinters] = useState(initialPrinters);
+    const printersCollectionRef = collection(db, 'printers');
+
+
+
+
+    useEffect(
+        () => {
+            // Get all printers
+            const getEvents = async () => {
+                try {
+                    const data = await getDocs(printersCollectionRef);
+                    const filteredData = data.docs.map((doc) => ({
+                        ...doc.data(),
+                        name: doc.data().name,
+                        description: doc.data().description,
+                        url: doc.data().url
+                    })) as Printer[];
+                    setPrinters(filteredData);
+                    console.log(filteredData);
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+            getEvents();
+        },
+        []
+    )
 
     const handleSelectPrinter = (printer: Printer) => {
         setSelectedPrinter(printer);
-    };
-
-    const handlePrintConfirmation = () => {
-        router.push('/time-selection');
     };
 
     const handleAddPrinter = async () => {
@@ -46,20 +67,22 @@ const PrintersPage = () => {
           // Create a new printer object with the form data
           const newPrinter = {
             name: newPrinterInfo.name,
-            description: newPrinterInfo.description,
+              description: newPrinterInfo.description,
+              url: newPrinterInfo.url
+
             // Add other relevant fields for the printer
           };
           try   {
-            console.log('Before adding printer');
-            const docRef = await addDoc(collectionRef, newPrinter);
+              const docRef = await addDoc(collectionRef, newPrinter);
+
             } catch (error) {   
             console.error('Error adding printer: ', error);
             }
           // Write the new printer to Firestore
-        console.log('New printer added with ID: ');
+          console.log('New printer added with ID: ');
     
           // Clear the form fields after successful submission
-          setNewPrinterInfo({ name: '', description: '', image: null });
+          setNewPrinterInfo({ name: '', description: '', url: '' });
     
           // Close the modal
           onClose();
@@ -78,16 +101,33 @@ const PrintersPage = () => {
     };
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files && e.target.files.length > 0) {
-        const file = e.target.files[0];
-        // You can handle the file upload here
-        console.log('Uploaded file:', file);
-        // For simplicity, let's just store the file object in state
-        setNewPrinterInfo({ ...newPrinterInfo});
-      } else {
-        setNewPrinterInfo({ ...newPrinterInfo});
-      }
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const uniqueFileName = file.name + '-' + v4(); 
+            const imageRef = ref(storage, `images/${uniqueFileName}`);
+
+            // Upload the file first
+            uploadBytes(imageRef, file).then((snapshot) => {
+                // After successful upload, get the download URL
+                return getDownloadURL(snapshot.ref);
+            }).then((printerUrl) => {
+                setNewPrinterInfo({ ...newPrinterInfo, url: printerUrl });
+            }).catch((error) => {
+                console.error("Error with file upload or fetching URL:", error);
+            });
+        } else {
+            // Handle the case where no file is selected, set default or placeholder URL
+            setNewPrinterInfo({ ...newPrinterInfo, url: '/assets/printer-photos/Form3.png' });
+        }
     };
+
+    useEffect(() => {
+        return () => {
+            if (printerImage) {
+                URL.revokeObjectURL(printerImage);
+            }
+        };
+    }, [printerImage]);
 
     return (
         <Box minHeight="100vh" display="flex" flexDirection="column" bg="gray.100">
@@ -99,50 +139,21 @@ const PrintersPage = () => {
                 <SimpleGrid columns={3} spacing={10}>
                     {printers.map((printer, index) => (
                         <Box key={index} p={5} shadow="md" borderWidth="1px" bg="gray.50">
-                            <Image src={printer.imageUrl} alt={printer.name} />
+                            <Image src={printer.url} alt={printer.name} />
                             <Heading fontSize="xl">{printer.name}</Heading>
-                            <Text>Status: {printer.status}</Text>
+                            <Button
+                                mt={4}
+                                onClick={() => handleSelectPrinter(printer)}
+                                colorScheme={selectedPrinter === printer ? 'green' : 'blue'}
+                            >
+                                Select
+                            </Button>
                         </Box>
                     ))}
                 </SimpleGrid>
-                <Button mt={4} colorScheme="blue" onClick={handleAddPrinter}>
+                <Button mt={4} colorScheme="blue" onClick={onOpen}>
                     Add Printer
                 </Button>
-                {selectedPrinter && (
-                    <Box mt={8}>
-                        <Heading as="h2" mb={4}>
-                            Enter Print Duration
-                        </Heading>
-                        <Flex>
-                            <Input
-                                type="number"
-                                placeholder="Hours"
-                                value={printDuration.hours}
-                                onChange={(e) =>
-                                    setPrintDuration({ ...printDuration, hours: parseInt(e.target.value) })
-                                }
-                                size="md"
-                                width="100px"
-                            />
-                            <Box mx={2}>:</Box>
-                            <Input
-                                type="number"
-                                placeholder="Minutes"
-                                value={printDuration.minutes}
-                                onChange={(e) =>
-                                    setPrintDuration({ ...printDuration, minutes: parseInt(e.target.value) })
-                                }
-                                size="md"
-                                width="100px"
-                            />
-                        </Flex>
-                    </Box>
-                )}
-                {selectedPrinter && printDuration.hours > 0 && printDuration.minutes > 0 && (
-                    <Button mt={4} colorScheme="blue" onClick={handlePrintConfirmation}>
-                        Confirm Print
-                    </Button>
-                )}
             </Box>
             <Footer />
             <Modal isOpen={isOpen} onClose={onClose}>
@@ -171,7 +182,7 @@ const PrintersPage = () => {
                         />
                     </ModalBody>
                     <ModalFooter>
-                        <Button  onClick={onClose} colorScheme="blue" mr={3}>
+                        <Button  onClick={handleAddPrinter} colorScheme="blue" mr={3}>
                             Save
                         </Button>
                         <Button onClick={onClose}>Cancel</Button>

@@ -1,35 +1,60 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Heading, SimpleGrid, Image, Text, Button, Input, Flex } from '@chakra-ui/react';
 import Navbar from '@/components/StudentHeader';
 import Footer from '@/components/Footer';
-import { Form3, Form3L, Fuse1, MakerGearM3, SintratecKit, Voron } from '@/assets/printer-photos';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { useRouter } from 'next/router';
+import { db, storage } from '@/firebase/firestore/index';
 
-//printer data structure
+// Printer data structure
 interface Printer {
     name: string;
-    imageUrl: string;
-    status: string;
+    description: string;
+    url: string;
 }
-
-// sample data for printers
-const printers: Printer[] = [
-    { name: 'Voron', imageUrl: Voron.src, status: 'Available' },
-    { name: 'MakerGear M3', imageUrl: MakerGearM3.src, status: 'In Use' },
-    { name: 'Form 3', imageUrl: Form3.src, status: 'Available' },
-];
 
 const PrintersPage = () => {
     const router = useRouter();
     const [selectedPrinter, setSelectedPrinter] = useState<Printer | null> (null) ;
     const [buttonClicked, setButtonClicked] = useState(false); // State to track button click
+    const [printerImage, setPrinterImage] = useState<string>('');
+    const initialPrinters: Printer[] = [
+    ];
+    const [printers, setPrinters] = useState(initialPrinters);
+    const printersCollectionRef = collection(db, 'printers');
+
+
+
+
+    useEffect(
+        () => {
+            // Get all printers
+            const getEvents = async () => {
+                try {
+                    const data = await getDocs(printersCollectionRef);
+                    const filteredData = data.docs.map((doc) => ({
+                        ...doc.data(),
+                        name: doc.data().name,
+                        description: doc.data().description,
+                        url: doc.data().url
+                    })) as Printer[];
+                    setPrinters(filteredData);
+                    console.log(filteredData);
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+            getEvents();
+        },
+        []
+    )
 
     const handleSelectPrinter = (printer: Printer) => {
         setSelectedPrinter(printer);
     };
 
     const handlePrintConfirmation = () => {
-        router.push('/time-selection');
+        router.push('/student/time-selection');
     };
 
     return (
@@ -42,9 +67,8 @@ const PrintersPage = () => {
                 <SimpleGrid columns={3} spacing={10}>
                     {printers.map((printer, index) => (
                         <Box key={index} p={5} shadow="md" borderWidth="1px" bg="gray.50">
-                            <Image src={printer.imageUrl} alt={printer.name} />
+                            <Image src={printer.url} alt={printer.name} />
                             <Heading fontSize="xl">{printer.name}</Heading>
-                            <Text mt={4}>Status: {printer.status}</Text>
                             <Button
                                 mt={4}
                                 onClick={() => handleSelectPrinter(printer)}

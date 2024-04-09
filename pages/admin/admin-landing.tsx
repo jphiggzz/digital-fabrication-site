@@ -2,10 +2,10 @@
 import { Box, Heading, Text, Button, VStack } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/next-js';
 import Footer from '@/components/Footer';
-import AdminHeader from '@/components/AdminHeader';
-import { useAuth } from '../hooks/authcontext';
 import { NextRouter, useRouter } from 'next/router';
 import { useEffect } from 'react';
+import { useAuth } from '../../hooks/authcontext';
+import AdminHeader from '../../components/AdminHeader';
 
 const AdminLanding = () => {
     const { user, isAdmin } = useAuth();
