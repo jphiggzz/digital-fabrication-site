@@ -1,10 +1,10 @@
 import { Printer } from '@/types/Printer';
 export interface Event {
     id: string;
-    //user: string;
+    user: string;
     startTime: string; //change to Date
     endTime: string; //change to Date
-    //printer: Printer;
+    printer: string;
 }
 //function for date conversion for events
 export function formatDateToString(date: Date) {

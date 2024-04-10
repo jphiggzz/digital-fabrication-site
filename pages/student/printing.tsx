@@ -53,8 +53,11 @@ const PrintersPage = () => {
         setSelectedPrinter(printer);
     };
 
-    const handlePrintConfirmation = () => {
-        router.push('/student/time-selection');
+    const handlePrintConfirmation = (printer: Printer) => {
+        router.push({
+            pathname: 'time-selection/',  // keep the current page but change the query
+            query: { selectedPrinter: printer.name },  // you can pass the printer ID
+        });
     };
 
     return (
@@ -80,7 +83,7 @@ const PrintersPage = () => {
                     ))}
                 </SimpleGrid>
                 {selectedPrinter && (
-                    <Button mt={4} colorScheme="teal" onClick={handlePrintConfirmation}>
+                    <Button mt={4} colorScheme="teal" onClick={ () => handlePrintConfirmation(selectedPrinter)}>
                         View Times
                     </Button>
                 )}

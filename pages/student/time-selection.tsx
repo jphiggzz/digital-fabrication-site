@@ -5,6 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { format, parseISO, isWithinInterval, addDays, subDays, differenceInCalendarDays, isBefore, isToday } from 'date-fns';
+import { useRouter } from 'next/router';
 import Navbar from '@/components/StudentHeader';
 import Footer from '@/components/Footer';
 import { Event, formatDateToString } from '@/types/Event';
@@ -12,14 +13,10 @@ import { Printer } from '@/types/Printer';
 import { addEvent, getEvents } from '../../services/events';
 import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firestore/index';
+import { useAuth } from '../../hooks/authcontext';
 
 
-const printers: Printer[] = [
-    // Add the correct path to your images or use URLs
-    { id: '1', name: 'Voron', imageUrl: '/images/Voron.jpg', description: 'Available' },
-    { id: '2', name: 'MakerGear M3', imageUrl: '/images/MakerGearM3.jpg', description: 'In Use' },
-    { id: '3', name: 'Form 3', imageUrl: '/images/Form3.jpg', description: 'Available' },
-];
+
 
 const initialEvents: Event[] = [
     // Assuming starting with some events
@@ -27,41 +24,52 @@ const initialEvents: Event[] = [
 ];
 
 const TimeSelection = () => {
-    const { data: session } = useSession();
+    const router = useRouter();
+    const { user } = useAuth();
+    const userName = user?.displayName || 'no user'; 
     const [events, setEvents] = useState(initialEvents);
     const eventsCollectionRef = collection(db, "reservations");
+
+    const printerName = router.query.selectedPrinter;
+    console.log(printerName);
+    console.log(user);
+    console.log(userName);
+    console.log(user?.displayName);
+    console.log(user?.email);
+    const printerNameString = Array.isArray(printerName) ? printerName[0] : printerName || 'defaultPrinterName';
+
 
     //const convertToTimestamp = (timestamp: Timestamp) => {
       //  if (!timestamp) return null; // or a default value
         //return timestamp instanceof Timestamp ? timestamp.toDate() : timestamp;
     //};
 
-    useEffect(
-        () => {
-            // Get all reservations
-            const getEvents = async () => {
-                try {
-                    const data = await getDocs(eventsCollectionRef);
-                    const filteredData = data.docs.map((doc) => ({
-                        ...doc.data(),
-                        id: doc.id,
-                        startTime: doc.data().startTime,
-                        endTime: doc.data().endTime
-                    })) as Event[]; 
-                    setEvents(filteredData);
-                    console.log(filteredData);
-                } catch (err) {
-                    console.error(err);
-                }
-            };
+    useEffect(() => {
+        const getEvents = async () => {
+            if (!printerName) return; // Ensure printerName is defined
+            try {
+                const data = await getDocs(eventsCollectionRef);
+                const filteredData = data.docs.map((doc) => ({
+                    ...doc.data(),
+                    id: doc.data().id,
+                    user: doc.data().user,
+                    startTime: doc.data().startTime,
+                    endTime: doc.data().endTime,
+                    printer: doc.data().printer
+                })).filter(event => event.printer === printerName) as Event[]; // Filter events by printer name
+                setEvents(filteredData);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        if (printerName) {
             getEvents();
-        },
-        []
-    )
+        }
+    }, [printerName]);
 
 
     const [selectedDay, setSelectedDay] = useState(new Date());
-    const [newEventDetails, setNewEventDetails] = useState({ ID: '', startTime: '', endTime: ''});
+    const [newEventDetails, setNewEventDetails] = useState({ ID: '', user: '', startTime: '', endTime: '', printer: ''});
     const today = new Date();
     const maxDay = addDays(today, 7); // Limit up to 7 days from today
 
@@ -113,15 +121,17 @@ const TimeSelection = () => {
 
         const newEvent: Event = {
             id: ID,
+            user: userName,
             startTime: formatDateToString( startDateTime ),
-            endTime: formatDateToString( endDateTime ),
+            endTime: formatDateToString(endDateTime),
+            printer: printerNameString
  
         };
 
         await addEvent(newEvent);
 
         setEvents([...events, newEvent]);
-        setNewEventDetails({ ID: '', startTime: '', endTime: ''});
+        setNewEventDetails({ ID: '', user: '', startTime: '', endTime: '', printer: '' });
     };
 
     const renderEvent = (event: Event) => {
@@ -135,6 +145,7 @@ const TimeSelection = () => {
     };
 
     return (
+
         <Box height="100vh" display="flex" flexDirection="column">
             <Navbar />
             <Flex flex="1" p="4" overflowY="auto" alignItems="start">
