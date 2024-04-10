@@ -2,8 +2,8 @@ import { Printer } from '@/types/Printer';
 export interface Event {
     id: string;
     user: string;
-    startTime: string; //change to Date
-    endTime: string; //change to Date
+    startTime: Date; //change to Date
+    endTime: Date; //change to Date
     printer: string;
 }
 //function for date conversion for events

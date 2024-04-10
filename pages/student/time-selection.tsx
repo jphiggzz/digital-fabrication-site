@@ -4,13 +4,13 @@ import {
     Box, Button, Flex, Heading, Input, Text, VStack, IconButton, Stack, Image, FormControl, FormLabel, Select
 } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
-import { format, parseISO, isWithinInterval, addDays, subDays, differenceInCalendarDays, isBefore, isToday } from 'date-fns';
+import { format, parseISO, isWithinInterval, addDays, subDays, differenceInCalendarDays, isBefore, isSameDay } from 'date-fns';
 import { useRouter } from 'next/router';
 import Navbar from '@/components/StudentHeader';
 import Footer from '@/components/Footer';
 import { Event, formatDateToString } from '@/types/Event';
 import { Printer } from '@/types/Printer';
-import { addEvent, getEvents } from '../../services/events';
+import { addEvent } from '../../services/events';
 import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firestore/index';
 import { useAuth } from '../../hooks/authcontext';
@@ -28,15 +28,14 @@ const TimeSelection = () => {
     const { user } = useAuth();
     const userName = user?.displayName || 'no user'; 
     const [events, setEvents] = useState(initialEvents);
+    const [selectedDay, setSelectedDay] = useState(new Date());
     const eventsCollectionRef = collection(db, "reservations");
 
     const printerName = router.query.selectedPrinter;
-    console.log(printerName);
-    console.log(user);
-    console.log(userName);
-    console.log(user?.displayName);
-    console.log(user?.email);
     const printerNameString = Array.isArray(printerName) ? printerName[0] : printerName || 'defaultPrinterName';
+    const [newEventDetails, setNewEventDetails] = useState({ ID: '', user: '', startTime: new Date(), endTime: new Date(), printer: '' });
+    const today = new Date();
+    const maxDay = addDays(today, 7); // Limit up to 7 days from today
 
 
     //const convertToTimestamp = (timestamp: Timestamp) => {
@@ -53,11 +52,15 @@ const TimeSelection = () => {
                     ...doc.data(),
                     id: doc.data().id,
                     user: doc.data().user,
-                    startTime: doc.data().startTime,
-                    endTime: doc.data().endTime,
+                    startTime: new Date(doc.data().startTime.seconds * 1000), // Convert Timestamp to Date
+                    endTime: new Date(doc.data().endTime.seconds * 1000),
                     printer: doc.data().printer
-                })).filter(event => event.printer === printerName) as Event[]; // Filter events by printer name
+                })).filter(Event => Event.printer === printerName && isSameDay(Event.startTime, selectedDay)
+                ) as Event[]; // Filter events by printer name event.printer === printerName &&isSameDay(Event.startTime, selectedDay)
                 setEvents(filteredData);
+                console.log(printerName);
+                console.log(selectedDay);
+                console.log(filteredData);
             } catch (err) {
                 console.error(err);
             }
@@ -65,28 +68,39 @@ const TimeSelection = () => {
         if (printerName) {
             getEvents();
         }
-    }, [printerName]);
+    }, [printerName, selectedDay]);
 
-
-    const [selectedDay, setSelectedDay] = useState(new Date());
-    const [newEventDetails, setNewEventDetails] = useState({ ID: '', user: '', startTime: '', endTime: '', printer: ''});
-    const today = new Date();
-    const maxDay = addDays(today, 7); // Limit up to 7 days from today
 
     const handleDayChange = (direction: 'next' | 'prev') => {
         setSelectedDay(prev => {
             const newDay = direction === 'next' ? addDays(prev, 1) : subDays(prev, 1);
             if (direction === 'next' && differenceInCalendarDays(newDay, today) > 7) return prev; // Prevent going beyond 7 days
-            if (direction === 'prev' && newDay < today) return prev; // Prevent going before today
+            if (direction === 'prev' && isBefore(newDay, today)) return today; // Prevent going before today
             return newDay;
+        });
+    };
+
+    const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        // Convert the input string to a Date object before setting the state
+        setNewEventDetails({
+            ...newEventDetails,
+            startTime: new Date(event.target.value)
+        });
+    };
+
+    const handleEndTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        // Convert the input string to a Date object before setting the state
+        setNewEventDetails({
+            ...newEventDetails,
+            endTime: new Date(event.target.value)
         });
     };
 
     const addNewEvent = async () => {
         const { ID, startTime, endTime } = newEventDetails;
         const id = ID;
-        const startDateTime = parseISO(startTime);
-        const endDateTime = parseISO(endTime);
+        const startDateTime = startTime;
+        const endDateTime = endTime;
 
          //check for time conflicts
         // Check if startDateTime is before endDateTime
@@ -122,8 +136,8 @@ const TimeSelection = () => {
         const newEvent: Event = {
             id: ID,
             user: userName,
-            startTime: formatDateToString( startDateTime ),
-            endTime: formatDateToString(endDateTime),
+            startTime: startDateTime ,
+            endTime: endDateTime,
             printer: printerNameString
  
         };
@@ -131,15 +145,17 @@ const TimeSelection = () => {
         await addEvent(newEvent);
 
         setEvents([...events, newEvent]);
-        setNewEventDetails({ ID: '', user: '', startTime: '', endTime: '', printer: '' });
+        setNewEventDetails({ ID: '', user: '', startTime: new Date(), endTime: new Date(), printer: '' });
     };
 
     const renderEvent = (event: Event) => {
         return (
             <Box key={event.id} borderWidth="1px" borderRadius="lg" overflow="hidden" p={4} my={2}>
                 <Text>{event.id} </Text>
-                <Text>Start: {event.startTime} </Text>
-                <Text>End: {event.endTime} </Text>
+                <Text>Start: {formatDateToString(event.startTime)} </Text>
+                <Text>End: {formatDateToString(event.endTime)} </Text>
+                <Text>User: {event.user} </Text>
+                <Text>Printer: {event.printer } </Text>
             </Box>
         );
     };
@@ -165,11 +181,11 @@ const TimeSelection = () => {
                     </FormControl>
                     <FormControl>
                         <FormLabel>Start Time</FormLabel>
-                        <Input type="datetime-local" value={newEventDetails.startTime} onChange={(e) => setNewEventDetails({ ...newEventDetails, startTime: e.target.value })} />
+                        <Input type="datetime-local" value={newEventDetails.startTime.toISOString().slice(0, 16)} onChange={handleStartTimeChange} />
                     </FormControl>
                     <FormControl>
                         <FormLabel>End Time</FormLabel>
-                        <Input type="datetime-local" value={newEventDetails.endTime} onChange={(e) => setNewEventDetails({ ...newEventDetails, endTime: e.target.value })} />
+                        <Input type="datetime-local" value={newEventDetails.endTime.toISOString().slice(0, 16)} onChange={handleEndTimeChange} />
                     </FormControl>
                     <Button mt="4" colorScheme="blue" onClick={addNewEvent}>Add Event</Button>
                 </Flex>
