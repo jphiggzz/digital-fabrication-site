@@ -15,8 +15,6 @@ interface Printer {
     url: string;
 }
 
-
-
 const PrintersPage = () => {
     const router = useRouter();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -28,31 +26,23 @@ const PrintersPage = () => {
     const [printers, setPrinters] = useState(initialPrinters);
     const printersCollectionRef = collection(db, 'printers');
 
+    useEffect(() => {
+        const fetchPrinters = async () => {
+            try {
+                const data = await getDocs(printersCollectionRef);
+                const printersData = data.docs.map(doc => ({
+                    name: doc.data().name,
+                    description: doc.data().description,
+                    url: doc.data().url
+                })) as Printer[];
+                setPrinters(printersData);
+            } catch (err) {
+                console.error(err);
+            }
+        };
 
-
-
-    useEffect(
-        () => {
-            // Get all printers
-            const getEvents = async () => {
-                try {
-                    const data = await getDocs(printersCollectionRef);
-                    const filteredData = data.docs.map((doc) => ({
-                        ...doc.data(),
-                        name: doc.data().name,
-                        description: doc.data().description,
-                        url: doc.data().url
-                    })) as Printer[];
-                    setPrinters(filteredData);
-                    console.log(filteredData);
-                } catch (err) {
-                    console.error(err);
-                }
-            };
-            getEvents();
-        },
-        []
-    )
+        fetchPrinters();
+    }, [printersCollectionRef]);  // Include printersCollectionRef in the dependency array
 
     const handleSelectPrinter = (printer: Printer) => {
         setSelectedPrinter(printer);
