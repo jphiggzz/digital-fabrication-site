@@ -12,18 +12,19 @@ import { useEffect } from 'react';
 const AdminLanding = () => {
     const { user, isAdmin } = useAuth();
     const router = useRouter();
-
-    if (!user) {
-        return <div>Loading or not authenticated...</div>; // This will only be shown briefly
-    }
-
+    
     useEffect(() => {
+      
         if (!isAdmin) {
             router.push('/'); // Redirect to home if not admin
             return;
         }
     }, [isAdmin, router]);
-
+    
+    if (!user) {
+      return <div>Loading or not authenticated...</div>; // This will only be shown briefly
+    }
+    
   return (
     <Box height="100vh" display="flex" flexDirection="column" bg="gray.200">
       <AdminHeader />
