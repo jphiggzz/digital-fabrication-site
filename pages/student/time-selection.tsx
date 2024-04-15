@@ -14,7 +14,7 @@ import { addEvent } from '../../services/events';
 import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firestore/index';
 import { useAuth } from '../../hooks/authcontext';
-
+import { useMemo } from 'react';
 
 
 
@@ -29,7 +29,7 @@ const TimeSelection = () => {
     const userName = user?.displayName || 'no user'; 
     const [events, setEvents] = useState(initialEvents);
     const [selectedDay, setSelectedDay] = useState(new Date());
-    const eventsCollectionRef = collection(db, "reservations");
+    const eventsCollectionRef = useMemo(() => collection(db, "reservations"), [db]);
 
     const printerName = router.query.selectedPrinter;
     const printerNameString = Array.isArray(printerName) ? printerName[0] : printerName || 'defaultPrinterName';

@@ -10,14 +10,10 @@ import { Event } from '@/types/Event';
 import { isWithinInterval, addDays} from 'date-fns';
 
 
-
-
-
 const initialEvents: Event[] = [
     // Assuming starting with some events
     // Dates need to be adjusted or dynamically set
 ];
-
 
 const ProfilesPage = () => {
     const { user } = useAuth();
@@ -32,12 +28,12 @@ const ProfilesPage = () => {
                 const data = await getDocs(eventsCollectionRef);
                 const filteredData = data.docs.map((doc) => ({
                     ...doc.data(),
-                    id: doc.data().id,
+                    id: doc.id,
                     user: doc.data().user,
-                    startTime: new Date(doc.data().startTime.seconds * 1000), // Convert Timestamp to Date
+                    startTime: new Date(doc.data().startTime.seconds * 1000),
                     endTime: new Date(doc.data().endTime.seconds * 1000),
                     printer: doc.data().printer
-                })).filter(Event => Event.user === userName && isWithinInterval(Event.startTime, { start: new Date(), end: addDays(new Date(), 7) }) ) as Event[]; 
+                })).filter(Event => Event.user === userName && isWithinInterval(Event.startTime, { start: new Date(), end: addDays(new Date(), 7) }));
                 setEvents(filteredData);
                 console.log(filteredData);
             } catch (err) {
@@ -45,8 +41,8 @@ const ProfilesPage = () => {
             }
         };
         getEvents();
-    }, [userName]);
-
+    }, [userName, eventsCollectionRef]);  // Include eventsCollectionRef in the dependency array
+    
 
 
     // Function to handle the "Cancel" action
@@ -68,7 +64,7 @@ const ProfilesPage = () => {
                     <Text fontWeight = "bold" fontSize="xl"> 
                         Bookings:<br />
                         <Text fontWeight="normal" fontStyle="italic">
-                            //display bookings
+                            
                         </Text>
                     </Text>
                     <Button colorScheme="red" mt="4" onClick={handleCancel}>Cancel</Button>
