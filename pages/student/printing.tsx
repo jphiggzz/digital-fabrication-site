@@ -26,28 +26,26 @@ const PrintersPage = () => {
 
 
 
-    useEffect(
-        () => {
-            // Get all printers
-            const getEvents = async () => {
-                try {
-                    const data = await getDocs(printersCollectionRef);
-                    const filteredData = data.docs.map((doc) => ({
-                        ...doc.data(),
-                        name: doc.data().name,
-                        description: doc.data().description,
-                        url: doc.data().url
-                    })) as Printer[];
-                    setPrinters(filteredData);
-                    console.log(filteredData);
-                } catch (err) {
-                    console.error(err);
-                }
-            };
-            getEvents();
-        },
-        []
-    )
+    useEffect(() => {
+        const printersCollectionRef = collection(db, 'printers');
+
+        const fetchPrinters = async () => {
+            try {
+                const data = await getDocs(printersCollectionRef);
+                const printersData = data.docs.map(doc => ({
+                    ...doc.data(),
+                    name: doc.data().name,
+                    description: doc.data().description,
+                    url: doc.data().url
+                })) as Printer[];
+                setPrinters(printersData);
+            } catch (err) {
+                console.error('Failed to fetch printers:', err);
+            }
+        };
+
+        fetchPrinters();
+    }, []); 
 
     const handleSelectPrinter = (printer: Printer) => {
         setSelectedPrinter(printer);
