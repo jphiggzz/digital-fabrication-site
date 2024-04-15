@@ -1,5 +1,5 @@
 import { Printer } from '@/types/Printer';
-import db from '@/firebase/firestore';
+import { db } from '@/firebase/firestore';
 import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 
 // Reference to the printers collection in Firestore

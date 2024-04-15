@@ -1,4 +1,4 @@
-import db from '@/firebase/firestore/index'; // Adjust this path as per your project structure
+import { db } from '@/firebase/firestore/index'; // Adjust this path as per your project structure
 import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { Reservation } from '@/types/Reservation';
 

@@ -45,7 +45,6 @@ const TimeSelection = () => {
 
     useEffect(() => {
         const getEvents = async () => {
-            if (!printerName) return; // Ensure printerName is defined
             try {
                 const data = await getDocs(eventsCollectionRef);
                 const filteredData = data.docs.map((doc) => ({
@@ -56,11 +55,8 @@ const TimeSelection = () => {
                     endTime: new Date(doc.data().endTime.seconds * 1000),
                     printer: doc.data().printer
                 })).filter(Event => Event.printer === printerName && isSameDay(Event.startTime, selectedDay)
-                ) as Event[]; // Filter events by printer name event.printer === printerName &&isSameDay(Event.startTime, selectedDay)
+                ) as Event[];
                 setEvents(filteredData);
-                console.log(printerName);
-                console.log(selectedDay);
-                console.log(filteredData);
             } catch (err) {
                 console.error(err);
             }
@@ -68,7 +64,7 @@ const TimeSelection = () => {
         if (printerName) {
             getEvents();
         }
-    }, [printerName, selectedDay]);
+    }, [printerName, selectedDay, eventsCollectionRef]);
 
 
     const handleDayChange = (direction: 'next' | 'prev') => {
