@@ -1,0 +1,15 @@
+{
+    "build": {
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "routes": [
+      {
+        "src": "/tests/(.*)",
+        "status": 404
+      }
+    ],
+    "cleanUrls": true
+  }
+  
