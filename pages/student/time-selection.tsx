@@ -147,14 +147,12 @@ const TimeSelection = () => {
     setNewEventDetails({ ID: '', user: '', startTime: new Date(), endTime: new Date(), printer: '' });
 };
 
-    
-
     const renderEvent = (event: Event) => {
         return (
             <Box key={event.id} borderWidth="1px" borderRadius="lg" overflow="hidden" p={4} my={2}>
                 <Text>{event.id} </Text>
-                <Text>Start: {event.startTime.toString()} </Text>
-                <Text>End: {event.endTime.toString()} </Text>
+                <Text>Start: {formatDateToString(event.startTime)} </Text>
+                <Text>End: {formatDateToString(event.endTime)} </Text>
                 <Text>User: {event.user} </Text>
                 <Text>Printer: {event.printer } </Text>
             </Box>

@@ -113,9 +113,10 @@ const TimeSelection = () => {
 
         const newEvent: Event = {
             id: ID,
-            startTime: formatDateToString( startDateTime ),
-            endTime: formatDateToString( endDateTime ),
- 
+            startTime: startDateTime, // Change the type to string
+            endTime: endDateTime, // Change the type to string
+            user: session?.user?.email || 'no user',
+            printer: printers[0].name
         };
 
         await addEvent(newEvent);
@@ -128,8 +129,8 @@ const TimeSelection = () => {
         return (
             <Box key={event.id} borderWidth="1px" borderRadius="lg" overflow="hidden" p={4} my={2}>
                 <Text>{event.id} </Text>
-                <Text>Start: {event.startTime} </Text>
-                <Text>End: {event.endTime} </Text>
+                <Text>Start: {event.startTime.toString()} </Text>
+                <Text>End: {event.endTime.toString()} </Text>
             </Box>
         );
     };
