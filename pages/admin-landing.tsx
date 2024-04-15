@@ -7,6 +7,8 @@ import { useAuth } from '../hooks/authcontext';
 import { NextRouter, useRouter } from 'next/router';
 import { useEffect } from 'react';
 
+// test deploy thing 
+
 const AdminLanding = () => {
     const { user, isAdmin } = useAuth();
     const router = useRouter();
