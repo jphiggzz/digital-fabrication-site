@@ -35,7 +35,7 @@ const TimeSelection = () => {
     const printerNameString = Array.isArray(printerName) ? printerName[0] : printerName || 'defaultPrinterName';
     const [newEventDetails, setNewEventDetails] = useState({ ID: '', user: '', startTime: new Date(), endTime: new Date(), printer: '' });
     const today = new Date();
-    const maxDay = addDays(today, 7); // Limit up to 7 days from today
+    const maxDay = addDays(today, 7);
 
 
     //const convertToTimestamp = (timestamp: Timestamp) => {
@@ -115,6 +115,10 @@ const TimeSelection = () => {
             return;
         }
 
+        if (!isBefore(startDateTime, addDays(new Date(), 7)) || !isBefore(endDateTime, addDays(new Date(), 7))) {
+            alert("Can only book 7 days in advance.");
+            return;
+        }
         // Check for time conflicts with existing events
         const hasConflict = events.some(event => {
             const eventStart = new Date(event.startTime);

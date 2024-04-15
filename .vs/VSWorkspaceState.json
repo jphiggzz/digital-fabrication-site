@@ -6,11 +6,12 @@
     "\\components",
     "\\firebase",
     "\\firebase\\firestore",
+    "\\hooks",
     "\\pages",
-    "\\pages\\admin",
     "\\pages\\student",
+    "\\services",
     "\\types"
   ],
-  "SelectedNode": "\\hooks\\authcontext.tsx",
+  "SelectedNode": "\\types\\Event.ts",
   "PreviewInSolutionExplorer": false
 }
