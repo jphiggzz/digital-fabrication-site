@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Heading, SimpleGrid, Text, Button, Flex } from '@chakra-ui/react';
+import { Box, Heading, SimpleGrid, Text, Button, Flex, useToast } from '@chakra-ui/react';
 import Navbar from '@/components/StudentHeader';
 import Footer from '@/components/Footer';
 import { useRouter } from 'next/router';
@@ -21,6 +21,8 @@ const ProfilesPage = () => {
     const [events, setEvents] = useState<Event[]>(initialEvents);
     // Initialize router with useRouter hook
     const router = useRouter();
+    // Initialize toast
+    const toast  = useToast();
     // Initialize the eventsCollectionRef variable with the reservations collection reference
     const eventsCollectionRef = collection(db, "reservations");
 
@@ -51,10 +53,17 @@ const ProfilesPage = () => {
         try {
             // Delete the document with the given eventId
             await deleteDoc(doc(db, "reservations", eventId));
-            // Notify user about successful cancellation
-            alert("Reservation cancelled successfully!");
             // Filter the events state to remove the cancelled event
             setEvents(prev => prev.filter(event => event.id !== eventId));
+            // Notify user of successful cancellation
+            toast({
+                title: "Reservation Cancelled",
+                description: "The reservation has been successfully cancelled.",
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+                position: "top"
+            });
         } catch (err) {
             // Log error message if something went wrong
             console.error('Error removing document: ', err);
@@ -65,6 +74,15 @@ const ProfilesPage = () => {
     const handleLogout = async () => {
         await signOut(); // Call signOut function
         router.push('/'); // Redirect user to homepage after logging out
+        // Notify user of successful logout
+        toast({
+            title: "Logged Out",
+            description: "You have been successfully logged out.",
+            status: "info",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom"
+        })
     };
     
     // Render the page
@@ -85,9 +103,9 @@ const ProfilesPage = () => {
                         </Box>
                     ))}
                 </SimpleGrid>
+                {events.length === 0 && <Text>No bookings found.</Text>}
                 <Button colorScheme="blue" onClick={handleLogout} marginTop={10} >Logout</Button>
             </Box>
-            {events.length === 0 && <Text>No bookings found.</Text>}
             </Flex>
             <Footer />
         </Box>

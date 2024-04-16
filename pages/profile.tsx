@@ -10,12 +10,6 @@ interface User {
     bookings: string;
 }
 
-// Sample data for users
-const users: User[] = [
-    { name: 'Kevin', bookings: '1:00pm on the 28/03' },
-    // Add more users if needed
-];
-
 // Find Kevin in the users array to set as the initial state
 const kevin = users.find(user => user.name === 'Kevin');
 
