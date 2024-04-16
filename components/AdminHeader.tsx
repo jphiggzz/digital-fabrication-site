@@ -14,7 +14,7 @@ export default function AdminHeader() {
     <chakra.header id="admin-header" bg="white">
       <Flex w="100%" px="6" py="5" align="center" justify="space-between">
         {/* Admin Landing Link */}
-        <Link href="/admin-landing">
+        <Link href="/admin/admin-landing">
           <Text fontSize="lg" fontWeight="bold">
             Admin Panel
           </Text>

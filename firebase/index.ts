@@ -4,13 +4,13 @@ import {initializeApp } from '@firebase/app';
 
 // Initialize Firebase 
 const firebaseConfig = {
-    apiKey: "AIzaSyANrQrjOLgXOAAMiA1sUb9zHgMUgpROFD0",
-    authDomain: "df-calendar-761d9.firebaseapp.com",
-    projectId: "df-calendar-761d9",
-    storageBucket: "df-calendar-761d9.appspot.com",
-    messagingSenderId: "28763905462",
-    appId: "1:28763905462:web:fa3509b842e00132a8f517",
-    measurementId: "G-5SME3MP8WR"
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 const clientApp = initializeApp(firebaseConfig);
