@@ -12,3 +12,5 @@ export const USER_COLLECTION = 'users';
 
 // name of the resources collection in Firebase
 export const PROJECTS_COLLECTION = 'projects';
+
+export const RESOURCES_COLLECTION = 'resources';
