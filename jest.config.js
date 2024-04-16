@@ -7,6 +7,7 @@ module.exports = {
       '^@/services/(.*)$': '<rootDir>/services/$1',
       '^@/components/(.*)$': '<rootDir>/components/$1',
       '^@/firebase/(.*)$': '<rootDir>/firebase/$1',
+      '^@/hooks/(.*)$': '<rootDir>/hooks/$1',
     },
     transform: {
       '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
@@ -28,6 +29,9 @@ module.exports = {
       'pages/**/*.ts',
       'pages/**/*.tsx',
       '!pages/**/*.d.ts',
+      'hooks/**/*.ts',
+      'hooks/**/*.tsx',
+      '!hooks/**/*.d.ts',
     ],
   };
   
