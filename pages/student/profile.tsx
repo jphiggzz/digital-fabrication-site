@@ -12,13 +12,6 @@ const initialEvents: Event[] = [];
 
 
 
-
-const initialEvents: Event[] = [
-    // Assuming starting with some events
-    // Dates need to be adjusted or dynamically set
-];
-
-
 const ProfilesPage = () => {
     const { user } = useAuth();
     const userName = user?.displayName || 'No User';
