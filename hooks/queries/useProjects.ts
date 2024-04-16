@@ -1,19 +1,15 @@
-import {useState} from "react";
+import {useCollectionData} from "react-firebase-hooks/firestore";
 
-import {Boat, CupHolder, Dinosaur} from "@/assets/gallery-photos";
-import {Project} from "@/types/Project";
-
-const dummyProjects: Project[] = [
-    { title: 'Boat', imageUrl: Boat.src, description: 'Edit this Print' },
-    { title: 'Cup Holder', imageUrl: CupHolder.src, description: 'Edit this Print' },
-    { title: 'Dinosaur', imageUrl: Dinosaur.src, description: 'Edit this Print' },
-];
+import {projectsCollectionRef} from "@/firebase/firestore/converters/projectConverter";
 
 const useProjects = () => {
 
-    const [projects, setProjects] = useState<Project[]>(dummyProjects);
+    const [projects, loading] = useCollectionData(projectsCollectionRef);
 
-    return { projects };
+    return {
+        projects: projects || [],
+        loading
+    };
 }
 
 export default useProjects;

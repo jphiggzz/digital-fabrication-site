@@ -1,16 +1,12 @@
 import { Box, Heading, SimpleGrid, Image, Text, Link } from '@chakra-ui/react';
 import Navbar from '@/components/StudentHeader';
 import Footer from '@/components/Footer';
-import { Boat, CupHolder, Dinosaur } from '@/assets/gallery-photos';
-
-// sample data for projects
-const projects = [
-  { title: 'Boat', imageUrl: Boat.src, description: 'Download this Print' },
-  { title: 'Cup Holder', imageUrl: CupHolder.src, description: 'Download this Print' },
-  { title: 'Dinosaur', imageUrl: Dinosaur.src, description: 'Download this Print' },
-];
+import useProjects from "@/hooks/queries/useProjects";
 
 const ProjectGalleryPage = () => {
+
+    const { projects } = useProjects();
+
   return (
     <Box height="100vh" display="flex" flexDirection="column" bg="gray.100">
         <Navbar />
@@ -23,9 +19,7 @@ const ProjectGalleryPage = () => {
               <Box key={index} p={5} shadow="md" borderWidth="1px" bg="white">
                   <Image src={project.imageUrl} alt={project.title} />
                   <Heading fontSize="xl" mt={4}>{project.title}</Heading>
-                  <Link href="/download" color="blue.400" _hover={{ color: 'blue.500' }}>
                     <Text mt={2}>{project.description}</Text>
-                  </Link>
               </Box>
               ))}
           </SimpleGrid>
