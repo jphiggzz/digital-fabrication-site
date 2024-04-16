@@ -72,22 +72,22 @@ const ProfilesPage = () => {
         <Box height="100vh" display="flex" flexDirection="column">
             <Navbar />
             <Flex flex="1" p="4" overflowY="auto" alignItems="start">
-                <Box p={8}>
-                    <Heading as="h1" mb={4}>{userName}'s Bookings</Heading>
-                    <SimpleGrid columns={2} spacing={4}>
-                        {events.map(event => (
-                            <Box key={event.id} shadow="md" borderWidth="1px" bg="gray.50" p={4}>
-                                <Text fontWeight="bold">{event.printName}</Text>
-                                <Text>Printer: {event.printer}</Text>
-                                <Text>Start: {formatDateToString(event.startTime)}</Text>
-                                <Text>End: {formatDateToString(event.endTime)}</Text>
-                                <Button colorScheme="red" mt="4" onClick={() => handleCancel(event.id)}>Cancel</Button>
-                            </Box>
-                        ))}
-                    </SimpleGrid>
-                    {events.length === 0 && <Text>No bookings found.</Text>}
-                    <Button colorScheme="blue" onClick={handleLogout} marginTop={5} >Logout</Button>
-                </Box>
+            <Box p={8}>
+                <Heading as="h1" mb={4}>{userName}'s Bookings</Heading>
+                <SimpleGrid columns={2} spacing={4}>
+                    {events.map(event => (
+                        <Box key={event.id} shadow="md" borderWidth="1px" bg="gray.50" p={4}>
+                            <Text fontWeight="bold">{event.printName}</Text>
+                            <Text>Printer: {event.printer}</Text>
+                            <Text>Start: {formatDateToString(event.startTime)}</Text>
+                            <Text>End: {formatDateToString(event.endTime)}</Text>
+                            <Button colorScheme="red" mt="4" onClick={() => handleCancel(event.id)}>Cancel</Button>
+                        </Box>
+                    ))}
+                </SimpleGrid>
+                <Button colorScheme="blue" onClick={handleLogout} marginTop={10} >Logout</Button>
+            </Box>
+            {events.length === 0 && <Text>No bookings found.</Text>}
             </Flex>
             <Footer />
         </Box>
