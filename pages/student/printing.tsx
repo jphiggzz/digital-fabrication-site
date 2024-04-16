@@ -24,8 +24,6 @@ const PrintersPage = () => {
     const printersCollectionRef = collection(db, 'printers');
 
 
-
-
     useEffect(() => {
         const printersCollectionRef = collection(db, 'printers');
 
@@ -59,36 +57,37 @@ const PrintersPage = () => {
     };
 
     return (
-        <Box height="100vh" display="flex" flexDirection="column" bg="gray.100">
-            <Navbar />
-            <Box p={8}>
-                <Heading as="h1" mb={4}>
-                    Select a printer:
-                </Heading>
-                <SimpleGrid columns={3} spacing={10}>
-                    {printers.map((printer, index) => (
-                        <Box key={index} p={5} shadow="md" borderWidth="1px" bg="gray.50">
-                            <Image src={printer.url} alt={printer.name} />
-                            <Heading fontSize="xl">{printer.name}</Heading>
-                            <Button
-                                mt={4}
-                                onClick={() => handleSelectPrinter(printer)}
-                                colorScheme={selectedPrinter === printer ? 'green' : 'blue'}
-                            >
-                                Select
-                            </Button>
-                        </Box>
-                    ))}
-                </SimpleGrid>
-                {selectedPrinter && (
-                    <Button mt={4} colorScheme="teal" onClick={ () => handlePrintConfirmation(selectedPrinter)}>
-                        View Times
-                    </Button>
-                )}
-            </Box>
-            <Footer />
+        <Box display="flex" flexDirection="column" minHeight="100vh" bg="gray.100"> {/* Use minHeight instead of height */}
+          <Navbar />
+          {/* flexGrow={1} will allow this Box to expand and push the Footer to the bottom */}
+          <Box flex="1" p={8}>
+            <Heading as="h1" mb={4}>
+              Select a printer:
+            </Heading>
+            <SimpleGrid columns={3} spacing={10}>
+              {printers.map((printer, index) => (
+                <Box key={index} p={5} shadow="md" borderWidth="1px" bg="gray.50">
+                  <Image src={printer.url} alt={printer.name} />
+                  <Heading fontSize="xl">{printer.name}</Heading>
+                  <Button
+                    mt={4}
+                    onClick={() => handleSelectPrinter(printer)}
+                    colorScheme={selectedPrinter === printer ? 'green' : 'blue'}
+                  >
+                    Select
+                  </Button>
+                </Box>
+              ))}
+            </SimpleGrid>
+            {selectedPrinter && (
+              <Button mt={4} colorScheme="teal" onClick={() => handlePrintConfirmation(selectedPrinter)}>
+                View Times
+              </Button>
+            )}
+          </Box>
+          <Footer />
         </Box>
-    );
-};
-
-export default PrintersPage;
+      );
+    };
+    
+    export default PrintersPage;

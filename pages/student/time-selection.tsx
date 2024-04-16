@@ -16,12 +16,7 @@ import { db } from '@/firebase/firestore/index';
 import { useAuth } from '../../hooks/authcontext';
 import { useMemo } from 'react';
 
-
-
-const initialEvents: Event[] = [
-    // Assuming starting with some events
-    // Dates need to be adjusted or dynamically set
-];
+const initialEvents: Event[] = [];
 
 const TimeSelection = () => {
     const router = useRouter();
@@ -37,12 +32,6 @@ const TimeSelection = () => {
     const today = new Date();
     const maxDay = addDays(today, 7);
 
-
-    //const convertToTimestamp = (timestamp: Timestamp) => {
-      //  if (!timestamp) return null; // or a default value
-        //return timestamp instanceof Timestamp ? timestamp.toDate() : timestamp;
-    //};
-
     useEffect(() => {
         const getEvents = async () => {
             try {
@@ -54,7 +43,7 @@ const TimeSelection = () => {
                     startTime: new Date(doc.data().startTime.seconds * 1000), // Convert Timestamp to Date
                     endTime: new Date(doc.data().endTime.seconds * 1000),
                     printer: doc.data().printer
-                })).filter(Event => Event.printer === printerName && isSameDay(Event.startTime, selectedDay)
+                })).filter(event => event.printer === printerNameString && isSameDay(event.startTime, selectedDay)
                 ) as Event[];
                 setEvents(filteredData);
             } catch (err) {
@@ -66,104 +55,102 @@ const TimeSelection = () => {
         }
     }, [printerName, selectedDay, eventsCollectionRef]);
 
-
     const handleDayChange = (direction: 'next' | 'prev') => {
         setSelectedDay(prev => {
             const newDay = direction === 'next' ? addDays(prev, 1) : subDays(prev, 1);
-            if (direction === 'next' && differenceInCalendarDays(newDay, today) > 7) return prev; // Prevent going beyond 7 days
-            if (direction === 'prev' && isBefore(newDay, today)) return today; // Prevent going before today
+            if (direction === 'next' && differenceInCalendarDays(newDay, today) > 7) return prev;
+            if (direction === 'prev' && isBefore(newDay, today)) return today;
             return newDay;
         });
     };
 
     const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // Convert the input string to a Date object before setting the state
-        setNewEventDetails({
-            ...newEventDetails,
-            startTime: new Date(event.target.value)
-        });
+        const localTime = new Date(event.target.value);
+        const timeInUtc = new Date(Date.UTC(localTime.getFullYear(), localTime.getMonth(), localTime.getDate(), localTime.getHours(), localTime.getMinutes()));
+        setNewEventDetails(prev => ({
+            ...prev,
+            startTime: timeInUtc
+        }));
     };
 
     const handleEndTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // Convert the input string to a Date object before setting the state
-        setNewEventDetails({
-            ...newEventDetails,
-            endTime: new Date(event.target.value)
-        });
+        const localTime = new Date(event.target.value);
+        const timeInUtc = new Date(Date.UTC(localTime.getFullYear(), localTime.getMonth(), localTime.getDate(), localTime.getHours(), localTime.getMinutes()));
+        setNewEventDetails(prev => ({
+            ...prev,
+            endTime: timeInUtc
+        }));
     };
 
     const addNewEvent = async () => {
-    const { ID, startTime, endTime } = newEventDetails;
-    const id = ID;
-    const startDateTime = startTime;
-    const endDateTime = endTime;
+        const { ID, startTime, endTime } = newEventDetails;
+        const id = ID;
+        const startDateTime = startTime;
+        const endDateTime = endTime;
 
-    // Check if startDateTime is before endDateTime
-    if (!isBefore(startDateTime, endDateTime)) {
-        alert("Start time must be before end time.");
-        return;
-    }
+        if (!isBefore(startDateTime, endDateTime)) {
+            alert("Start time must be before end time.");
+            return;
+        }
 
-    // Ensure both start and end times are not in the past
-    if (isBefore(startDateTime, new Date()) || isBefore(endDateTime, new Date())) {
-        alert("Event times must be in the future.");
-        return;
-    }
+        if (isBefore(startDateTime, new Date()) || isBefore(endDateTime, new Date())) {
+            alert("Event times must be in the future.");
+            return;
+        }
 
-    // Can only book 7 days in advance
-    if (!isBefore(startDateTime, addDays(new Date(), 7)) || !isBefore(endDateTime, addDays(new Date(), 7))) {
-        alert("Can only book 7 days in advance.");
-        return;
-    }
+        if (!isBefore(startDateTime, addDays(new Date(), 7)) || !isBefore(endDateTime, addDays(new Date(), 7))) {
+            alert("Can only book 7 days in advance.");
+            return;
+        }
 
-    // Check for time conflicts with existing events
-    const hasConflict = events.some(event => {
-        const eventStart = new Date(event.startTime);
-        const eventEnd = new Date(event.endTime);
-        return (
-            isWithinInterval(startDateTime, { start: eventStart, end: eventEnd }) ||
-            isWithinInterval(endDateTime, { start: eventStart, end: eventEnd }) ||
-            isWithinInterval(eventStart, { start: startDateTime, end: endDateTime }) ||
-            isWithinInterval(eventEnd, { start: startDateTime, end: endDateTime })
-        );
-    });
+        const hasConflict = events.some(event => {
+            const eventStart = new Date(event.startTime);
+            const eventEnd = new Date(event.endTime);
+            return (
+                isWithinInterval(startDateTime, { start: eventStart, end: eventEnd }) ||
+                isWithinInterval(endDateTime, { start: eventStart, end: eventEnd }) ||
+                isWithinInterval(eventStart, { start: startDateTime, end: endDateTime }) ||
+                isWithinInterval(eventEnd, { start: startDateTime, end: endDateTime })
+            );
+        });
 
-    if (hasConflict) {
-        alert("Event time overlaps with an existing event.");
-        return;
-    }
-
+        if (hasConflict) {
+            alert("Event time overlaps with an existing event.");
+            return;
+        }
 
         const newEvent: Event = {
             id: ID,
-            printName: ID, 
             user: userName,
-            startTime: startDateTime ,
+            startTime: startDateTime,
             endTime: endDateTime,
-            printer: printerNameString
-
+            printer: printerNameString,
+            printName: printerNameString
         };
 
-    await addEvent(newEvent);
+        await addEvent(newEvent);
+        setEvents([...events, newEvent]);
+        setNewEventDetails({ ID: '', user: '', startTime: new Date(), endTime: new Date(), printer: '' });
+    };
 
-    setEvents([...events, newEvent]);
-    setNewEventDetails({ ID: '', user: '', startTime: new Date(), endTime: new Date(), printer: '' });
-};
+    const formatDateToString = (date : Date) => {
+        return format(date, 'MMMM dd, yyyy, h:mm a'); // Example: April 16, 2024, 3:00 PM
+    };
 
-    const renderEvent = (event: Event) => {
+    const renderEvent = (event : Event) => {
         return (
             <Box key={event.id} borderWidth="1px" borderRadius="lg" overflow="hidden" p={4} my={2}>
-                <Text>{event.id} </Text>
-                <Text>Start: {formatDateToString(event.startTime)} </Text>
-                <Text>End: {formatDateToString(event.endTime)} </Text>
-                <Text>User: {event.user} </Text>
-                <Text>Printer: {event.printer } </Text>
+                <Text>{event.id}</Text>
+                <Text>Start: {formatDateToString(new Date(event.startTime))}</Text>
+                <Text>End: {formatDateToString(new Date(event.endTime))}</Text>
+                <Text>User: {event.user}</Text>
+                <Text>Printer: {event.printer}</Text>
             </Box>
         );
     };
+    
 
     return (
-
         <Box height="100vh" display="flex" flexDirection="column">
             <Navbar />
             <Flex flex="1" p="4" overflowY="auto" alignItems="start">
@@ -173,7 +160,7 @@ const TimeSelection = () => {
                         <IconButton aria-label="Previous day" icon={<ArrowBackIcon />} onClick={() => handleDayChange('prev')} isDisabled={selectedDay <= today} />
                         <IconButton aria-label="Next day" icon={<ArrowForwardIcon />} onClick={() => handleDayChange('next')} isDisabled={differenceInCalendarDays(maxDay, selectedDay) <= 0} />
                     </Stack>
-                    {events.map(event => renderEvent(event))}
+                    {events.map(renderEvent)}
                 </VStack>
                 <Flex flex="1" flexDirection="column" ml="4">
                     <Heading size="md">Add New Event</Heading>
