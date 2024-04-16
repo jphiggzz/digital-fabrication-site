@@ -5,6 +5,7 @@ export interface Event {
     startTime: Date; //change to Date
     endTime: Date; //change to Date
     printer: string;
+    printName: string;
 }
 //function for date conversion for events
 export function formatDateToString(date: Date) {

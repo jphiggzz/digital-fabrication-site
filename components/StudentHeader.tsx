@@ -38,7 +38,7 @@ export default function Header() {
                 aria-label="Profile"
                 icon={<FaUser />}
                 variant="ghost"
-                onClick={() => window.location.href = '/profile'} // Redirect to /profile
+                  onClick={() => window.location.href = '/student/profile'} // Redirect to /profile
             />
       </Flex>
     </chakra.header>

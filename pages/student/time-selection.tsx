@@ -135,11 +135,12 @@ const TimeSelection = () => {
 
         const newEvent: Event = {
             id: ID,
+            printName: ID, 
             user: userName,
             startTime: startDateTime ,
             endTime: endDateTime,
             printer: printerNameString
- 
+
         };
 
         await addEvent(newEvent);
