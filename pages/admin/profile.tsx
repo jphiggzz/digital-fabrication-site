@@ -38,11 +38,12 @@ const AdminPage = () => {
     }, []);
 
     // Async function to handle admin addition
-    const handleAddAdmin = async (newAdmin: Admin) => {
+    const handleAddAdmin = async (newAdmin: { email: string; name: string }) => {
         const { email, name } = newAdmin;
         try {
             await setDoc(doc(db, "adminUsers", email), { name, email });
-            setAdmins([...admins, { id: email, email, name }]);
+            const newAdminWithId = { id: email, email, name }; // Include the 'id' property based on the email
+            setAdmins([...admins, newAdminWithId]);
             toast({
                 title: "Admin added.",
                 description: "A new admin has been successfully added.",
@@ -61,6 +62,7 @@ const AdminPage = () => {
             });
         }
     };
+
 
     // Async function to handle admin deletion
     const handleDeleteAdmin = async (id: string) => {
