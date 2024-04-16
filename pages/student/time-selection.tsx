@@ -14,7 +14,7 @@ import { addEvent } from '../../services/events';
 import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firestore/index';
 import { useAuth } from '../../hooks/authcontext';
-
+import { useMemo } from 'react';
 
 
 
@@ -29,7 +29,7 @@ const TimeSelection = () => {
     const userName = user?.displayName || 'no user'; 
     const [events, setEvents] = useState(initialEvents);
     const [selectedDay, setSelectedDay] = useState(new Date());
-    const eventsCollectionRef = collection(db, "reservations");
+    const eventsCollectionRef = useMemo(() => collection(db, "reservations"), [db]);
 
     const printerName = router.query.selectedPrinter;
     const printerNameString = Array.isArray(printerName) ? printerName[0] : printerName || 'defaultPrinterName';
@@ -93,44 +93,45 @@ const TimeSelection = () => {
     };
 
     const addNewEvent = async () => {
-        const { ID, startTime, endTime } = newEventDetails;
-        const id = ID;
-        const startDateTime = startTime;
-        const endDateTime = endTime;
+    const { ID, startTime, endTime } = newEventDetails;
+    const id = ID;
+    const startDateTime = startTime;
+    const endDateTime = endTime;
 
-         //check for time conflicts
-        // Check if startDateTime is before endDateTime
-        if (!isBefore(startDateTime, endDateTime)) {
-            alert("Start time must be before end time.");
-            return;
-        }
+    // Check if startDateTime is before endDateTime
+    if (!isBefore(startDateTime, endDateTime)) {
+        alert("Start time must be before end time.");
+        return;
+    }
 
-        // Ensure both start and end times are not in the past
-        if (isBefore(startDateTime, new Date()) || isBefore(endDateTime, new Date())) {
-            alert("Event times must be in the future.");
-            return;
-        }
+    // Ensure both start and end times are not in the past
+    if (isBefore(startDateTime, new Date()) || isBefore(endDateTime, new Date())) {
+        alert("Event times must be in the future.");
+        return;
+    }
 
-        if (!isBefore(startDateTime, addDays(new Date(), 7)) || !isBefore(endDateTime, addDays(new Date(), 7))) {
-            alert("Can only book 7 days in advance.");
-            return;
-        }
-        // Check for time conflicts with existing events
-        const hasConflict = events.some(event => {
-            const eventStart = new Date(event.startTime);
-            const eventEnd = new Date(event.endTime);
-            return (
-                isWithinInterval(startDateTime, { start: eventStart, end: eventEnd }) ||
-                isWithinInterval(endDateTime, { start: eventStart, end: eventEnd }) ||
-                isWithinInterval(eventStart, { start: startDateTime, end: endDateTime }) ||
-                isWithinInterval(eventEnd, { start: startDateTime, end: endDateTime })
-            );
-        });
+    // Can only book 7 days in advance
+    if (!isBefore(startDateTime, addDays(new Date(), 7)) || !isBefore(endDateTime, addDays(new Date(), 7))) {
+        alert("Can only book 7 days in advance.");
+        return;
+    }
 
-        if (hasConflict) {
-            alert("Event time overlaps with an existing event.");
-            return;
-        }
+    // Check for time conflicts with existing events
+    const hasConflict = events.some(event => {
+        const eventStart = new Date(event.startTime);
+        const eventEnd = new Date(event.endTime);
+        return (
+            isWithinInterval(startDateTime, { start: eventStart, end: eventEnd }) ||
+            isWithinInterval(endDateTime, { start: eventStart, end: eventEnd }) ||
+            isWithinInterval(eventStart, { start: startDateTime, end: endDateTime }) ||
+            isWithinInterval(eventEnd, { start: startDateTime, end: endDateTime })
+        );
+    });
+
+    if (hasConflict) {
+        alert("Event time overlaps with an existing event.");
+        return;
+    }
 
 
         const newEvent: Event = {
@@ -143,11 +144,11 @@ const TimeSelection = () => {
 
         };
 
-        await addEvent(newEvent);
+    await addEvent(newEvent);
 
-        setEvents([...events, newEvent]);
-        setNewEventDetails({ ID: '', user: '', startTime: new Date(), endTime: new Date(), printer: '' });
-    };
+    setEvents([...events, newEvent]);
+    setNewEventDetails({ ID: '', user: '', startTime: new Date(), endTime: new Date(), printer: '' });
+};
 
     const renderEvent = (event: Event) => {
         return (

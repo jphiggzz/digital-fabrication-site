@@ -25,8 +25,10 @@ describe('PrintersPage', () => {
 
   it('allows selecting a printer and entering print duration', () => {
     renderPrintersPage();
-    const voronPrinterButton = screen.getByText('Voron').closest('div').querySelector('button');
-    fireEvent.click(voronPrinterButton);
+    const voronPrinterButton = screen.getByText('Voron').closest('div')?.querySelector('button');
+    if (voronPrinterButton) {
+      fireEvent.click(voronPrinterButton);
+    }
     expect(voronPrinterButton).toHaveTextContent('Select');
 
     const hoursInput = screen.getByPlaceholderText('Hours');

@@ -1,4 +1,3 @@
-import { Printer } from '@/types/Printer';
 export interface Event {
     id: string;
     user: string;
@@ -7,6 +6,7 @@ export interface Event {
     printer: string;
     printName: string;
 }
+
 //function for date conversion for events
 export function formatDateToString(date: Date) {
     const hours = date.getHours();
