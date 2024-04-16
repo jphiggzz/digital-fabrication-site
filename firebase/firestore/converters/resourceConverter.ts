@@ -8,9 +8,8 @@ import {
 } from "@firebase/firestore";
 
 import { db } from "@/firebase/firestore";
-import { RESOURCES_COLLECTION } from "@/firebase/firestore/collections"; // Ensure this constant is defined and points to the correct Firestore collection
-
-import { Resource } from "@/types/resource"; // Ensure the Resource type is properly defined in your types
+import { RESOURCES_COLLECTION } from "@/firebase/firestore/collections"; 
+import { Resource } from "@/types/Resource";
 
 const resourceConverter: FirestoreDataConverter<Resource> = {
     toFirestore(resource: WithFieldValue<Resource>): DocumentData {
