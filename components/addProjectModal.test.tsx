@@ -35,8 +35,8 @@ describe('AddPrintModal', () => {
     render(<AddPrintModal isOpen={true} onClose={jest.fn()} />);
     fireEvent.change(screen.getByPlaceholderText('Name of the print'), { target: { value: 'Test Print' } });
     fireEvent.change(screen.getByPlaceholderText('Description'), { target: { value: 'Test Description' } });
-    // Placeholder for file input simulation
-    // Assume file is set here as well
+
+    
     expect(screen.getByPlaceholderText('Name of the print')).toHaveValue('Test Print');
     expect(screen.getByPlaceholderText('Description')).toHaveValue('Test Description');
   });
@@ -60,11 +60,9 @@ describe('AddPrintModal', () => {
     render(<AddPrintModal isOpen={true} onClose={onCloseMock} />);
     fireEvent.change(screen.getByPlaceholderText('Name of the print'), { target: { value: 'Test Print' } });
     fireEvent.change(screen.getByPlaceholderText('Description'), { target: { value: 'Test Description' } });
-    // Assume file is set here as well
 
     fireEvent.click(screen.getByText('Save'));
 
-    // Use destructuring to get the mocked addPrint function from the hook
     const { addPrint } = useAddPrint();
     expect(addPrint).toHaveBeenCalled(); // Check if addPrint was called
     expect(onCloseMock).toHaveBeenCalled(); // Check if onClose was called after save
@@ -73,34 +71,26 @@ describe('AddPrintModal', () => {
         const mockFile = new File(['dummy content'], 'testfile.txt', { type: 'text/plain' });
         render(<AddPrintModal isOpen={true} onClose={jest.fn()} />);
       
-        // Assuming your file input is identifiable by placeholder or label, adjust as necessary
-        const fileInput = screen.getByLabelText('File Input'); // Adjust this to match your input's identifier
+        const fileInput = screen.getByLabelText('File Input');
       
-        // Simulate file selection
         fireEvent.change(fileInput, { target: { files: [mockFile] } });
       
-        // Verify the outcome - adjust based on your component's behavior
-        // This is an example assuming the file name or some indication becomes visible or triggers some change
-        expect(screen.getByText('File selected: testfile.txt')).toBeInTheDocument(); // Adjust expectation as necessary
+        expect(screen.getByText('File selected: testfile.txt')).toBeInTheDocument();
       });
       
       it('handles file selection correctly', () => {
         const mockFile = new File(['content'], 'test.pdf', { type: 'application/pdf' });
         render(<AddPrintModal isOpen={true} onClose={jest.fn()} />);
-        const fileInput = screen.getByLabelText('Your file input label'); // Adjust the selector as necessary
+        const fileInput = screen.getByLabelText('Your file input label');
         fireEvent.change(fileInput, { target: { files: [mockFile] } });
         
-        // Assertions to verify the file was handled, e.g., checking if setFile was called with mockFile.
-        // Since setFile updates a state, you may need to check for a visible UI change or mock its implementation if passed as a prop.
       });
 
       it('handles no file being selected', () => {
         render(<AddPrintModal isOpen={true} onClose={jest.fn()} />);
-        const fileInput = screen.getByLabelText('Your file input label'); // Adjust the selector as necessary
+        const fileInput = screen.getByLabelText('Your file input label');
         fireEvent.change(fileInput, { target: { files: [] } }); // Simulate file input being cleared
         
-        // Since your function doesn't do anything in this case, this might be a no-op.
-        // However, it's useful to have this test to ensure future changes don't unintentionally break this behavior.
       });      
   });
 });
