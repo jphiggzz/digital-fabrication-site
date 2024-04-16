@@ -82,23 +82,28 @@ const TimeSelection = () => {
     const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputValue = event.target.value;
         if (!inputValue) return; // Check if input value is empty
-        const localTime = new Date(inputValue);
-        const timeInUtc = new Date(Date.UTC(localTime.getFullYear(), localTime.getMonth(), localTime.getDate(), localTime.getHours(), localTime.getMinutes()));
+        const localTime = new Date(inputValue); // Directly use the local time
         setNewEventDetails(prev => ({
             ...prev,
-            startTime: timeInUtc
+            startTime: localTime
         }));
     };
     
     const handleEndTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputValue = event.target.value;
         if (!inputValue) return; // Check if input value is empty
-        const localTime = new Date(inputValue);
-        const timeInUtc = new Date(Date.UTC(localTime.getFullYear(), localTime.getMonth(), localTime.getDate(), localTime.getHours(), localTime.getMinutes()));
+        const localTime = new Date(inputValue); // Directly use the local time
         setNewEventDetails(prev => ({
             ...prev,
-            endTime: timeInUtc
+            endTime: localTime
         }));
+    };
+    
+    // Helper function to format date to local datetime-local input format
+    const toLocalISOString = (date : Date) => {
+        const tzOffset = date.getTimezoneOffset() * 60000; // Get the timezone offset in milliseconds
+        const localISOTime = new Date(date.getTime() - tzOffset).toISOString().slice(0, 16); // Correct usage: Get the numeric timestamp before subtracting
+        return localISOTime;
     };
     
 
@@ -190,11 +195,11 @@ const TimeSelection = () => {
                     </FormControl>
                     <FormControl>
                         <FormLabel>Start Time</FormLabel>
-                        <Input type="datetime-local" value={newEventDetails.startTime.toISOString().slice(0, 16)} onChange={handleStartTimeChange} />
+                        <Input type="datetime-local" value={toLocalISOString(newEventDetails.startTime)} onChange={handleStartTimeChange} />
                     </FormControl>
                     <FormControl>
                         <FormLabel>End Time</FormLabel>
-                        <Input type="datetime-local" value={newEventDetails.endTime.toISOString().slice(0, 16)} onChange={handleEndTimeChange} />
+                        <Input type="datetime-local" value={toLocalISOString(newEventDetails.endTime)} onChange={handleEndTimeChange} />
                     </FormControl>
                     <Button mt="4" colorScheme="blue" onClick={addNewEvent}>Add Event</Button>
                 </Flex>
