@@ -1,88 +1,110 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Box, Heading, Text, Button, useDisclosure,
-  Modal, ModalOverlay, ModalContent, ModalHeader,
-  ModalFooter, ModalBody, ModalCloseButton, Flex, VStack
-} from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { Box, Heading, SimpleGrid, Text, Button, Flex } from '@chakra-ui/react';
+import Navbar from '@/components/AdminHeader';
 import Footer from '@/components/Footer';
-import AdminHeader from '@/components/AdminHeader';
+import { useRouter } from 'next/router';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { db } from '@/firebase/firestore/index';
+import { Event } from '@/types/Event';
 
-const getRandomHours = () => {
-  const hours = [];
-  for (let i = 0; i < 9; i++) { // Adjusted for 9 cards (3 groups of 3)
-    const randomHour = Math.floor(Math.random() * 11) + 8; // Random hour between 8 and 18 (6 PM)
-    hours.push(randomHour);
-  }
-  return hours.sort((a, b) => a - b);
+const initialEvents: Event[] = [];
+
+const AdminReservationPage = () => {
+    const [events, setEvents] = useState<Event[]>(initialEvents);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const router = useRouter();
+    const eventsCollectionRef = collection(db, "reservations");
+
+    // Helper function to format dates for display in the heading
+    const formattedDate = (date : Date) => {
+        return date.toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+    };
+
+    // Helper function to format event times
+    const formatEventTime = (date : Date) => {
+        return date.toLocaleTimeString(undefined, {
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    };
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            const data = await getDocs(eventsCollectionRef);
+            const allEvents = data.docs.map((doc) => ({
+                ...doc.data(),
+                id: doc.id,
+                printName: doc.data().id || 'Unknown',
+                user: doc.data().user,
+                startTime: new Date(doc.data().startTime.seconds * 1000),
+                endTime: new Date(doc.data().endTime.seconds * 1000),
+                printer: doc.data().printer
+            }));
+
+            if (selectedDate) {
+                const startOfDay = new Date(selectedDate.setHours(0, 0, 0, 0));
+                const endOfDay = new Date(selectedDate.setHours(23, 59, 59, 999));
+                const filteredEvents = allEvents.filter(event => {
+                    const eventDate = new Date(event.startTime);
+                    return eventDate >= startOfDay && eventDate <= endOfDay;
+                });
+                setEvents(filteredEvents);
+            } else {
+                setEvents(allEvents); 
+            }
+        };
+        fetchEvents();
+    }, [selectedDate]);
+
+    const handleCancel = async (eventId: string) => {
+        try {
+            await deleteDoc(doc(db, "reservations", eventId));
+            setEvents(prev => prev.filter(event => event.id !== eventId));
+        } catch (err) {
+            console.error('Error removing document: ', err);
+        }
+    };
+
+    return (
+        <Box height="100vh" display="flex" flexDirection="column">
+            <Navbar />
+            <Flex flex="1" p="4" overflowY="auto" alignItems="start">
+                <Box p={8}>
+                    <Heading as="h1" mb={4}>
+                        All Bookings for {formattedDate(selectedDate)}
+                        <DatePicker
+                            selected={selectedDate}
+                            onChange={(date: Date | null) => {
+                                if (date) setSelectedDate(new Date(date)); // Ensure that the date is a Date object
+                            }}
+                            dateFormat="MMMM d, yyyy"
+                            customInput={<Button ml={4}>Select Date</Button>}
+                        />
+                    </Heading>
+                    <SimpleGrid columns={2} spacing={4}>
+                        {events.map(event => (
+                            <Box key={event.id} shadow="md" borderWidth="1px" bg="gray.50" p={4}>
+                                <Text fontWeight="bold">{event.printName}</Text>
+                                <Text>Booked by: {event.user}</Text>
+                                <Text>Printer: {event.printer}</Text>
+                                <Text>Start: {formatEventTime(event.startTime)}</Text>
+                                <Text>End: {formatEventTime(event.endTime)}</Text>
+                                <Button colorScheme="red" mt="4" onClick={() => handleCancel(event.id)}>Cancel</Button>
+                            </Box>
+                        ))}
+                    </SimpleGrid>
+                </Box>
+                {events.length === 0 && <Text>No bookings found.</Text>}
+            </Flex>
+            <Footer />
+        </Box>
+    );
 };
 
-const ManageReservations = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [hours, setHours] = useState<number[]>([]);  // Explicit type definition
-  const printers = ["Voron 300", "Formlabs Form 3", "Makergear M3 ID"];
-  const randomNames = ["alex", "jordan", "casey", "morgan", "taylor", "jessie", "cameron", "drew"];
-
-  useEffect(() => {
-    setHours(getRandomHours());
-  }, []);
-
-  const formatHour = (hour: number) => {
-    const isPM = hour >= 12;
-    const formattedHour = hour > 12 ? hour - 12 : hour;
-    return `${formattedHour}:00 ${isPM ? 'PM' : 'AM'}`;
-  };
-
-  const formattedDate = new Intl.DateTimeFormat('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric'
-  }).format(new Date());
-
-  return (
-    <Box minHeight="100vh" display="flex" flexDirection="column" bg="gray.50">
-      <AdminHeader />
-      <Box p={8}  >
-        <Heading as="h1" size="lg" textAlign="center">{`Reservations for ${formattedDate}`}</Heading>
-        <Text mt={2} textAlign="center">Click on a time slot to manage or delete the reservation.</Text>
-      </Box>
-      
-      <Flex wrap="wrap" justifyContent="center" alignItems="center" p={8}>
-        {hours.map((hour, index) => (
-          <Box key={hour} borderWidth="1px" borderRadius="lg" overflow="hidden" m={2} p={4} w={["100%", "30%"]}
-            bg="gray.100" boxShadow="md"
-            _hover={{ transform: 'scale(1.05)', transition: 'transform 0.2s ease-in-out' }}>
-            <VStack spacing={4} alignItems="center">
-              <Heading as="h3" size="md">{formatHour(hour)}</Heading>
-              <Text>Printer: {printers[index % printers.length]}</Text>
-              <Text>{randomNames[index % randomNames.length]}@vanderbilt.edu</Text>
-              <Button colorScheme="teal" onClick={onOpen}>Manage Reservation</Button>
-            </VStack>
-          </Box>
-        ))}
-      </Flex>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Manage Reservation</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Select an option below.
-          </ModalBody>
-
-          <ModalFooter justifyContent="center">
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Update Reservation
-            </Button>
-            <Button colorScheme="red" onClick={onClose}>
-              Delete Reservation
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Footer />
-    </Box>
-  );
-};
-
-export default ManageReservations;
+export default AdminReservationPage;

@@ -10,8 +10,6 @@ import { Event, formatDateToString } from '@/types/Event';
 
 const initialEvents: Event[] = [];
 
-
-
 const ProfilesPage = () => {
     const { user } = useAuth();
     const userName = user?.displayName || 'No User';
