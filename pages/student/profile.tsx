@@ -11,7 +11,7 @@ import { Event, formatDateToString } from '@/types/Event';
 const initialEvents: Event[] = [];
 
 const ProfilesPage = () => {
-    const { user } = useAuth();
+    const { user, signOut } = useAuth();
     const userName = user?.displayName || 'No User';
     const [events, setEvents] = useState<Event[]>(initialEvents);
     const router = useRouter();
@@ -25,8 +25,8 @@ const ProfilesPage = () => {
                 id: doc.id,
                 printName: doc.data().id,
                 user: doc.data().user,
-                startTime: new Date(doc.data().startTime.seconds * 1000),
-                endTime: new Date(doc.data().endTime.seconds * 1000),
+                startTime: doc.data().startTime ? new Date(doc.data().startTime.seconds * 1000) : new Date(),
+                endTime: doc.data().endTime ? new Date(doc.data().endTime.seconds * 1000) : new Date(),
                 printer: doc.data().printer
             })).filter(event => event.user === userName);
             setEvents(filteredData);
@@ -37,12 +37,18 @@ const ProfilesPage = () => {
     const handleCancel = async (eventId: string) => {
         try {
             await deleteDoc(doc(db, "reservations", eventId));
+            alert("Reservation cancelled successfully!");
             setEvents(prev => prev.filter(event => event.id !== eventId));
         } catch (err) {
             console.error('Error removing document: ', err);
         }
     };
 
+    const handleLogout = async () => {
+        await signOut();
+        router.push('/');
+    };
+    
     return (
         <Box height="100vh" display="flex" flexDirection="column">
             <Navbar />
@@ -59,10 +65,11 @@ const ProfilesPage = () => {
                             <Button colorScheme="red" mt="4" onClick={() => handleCancel(event.id)}>Cancel</Button>
                         </Box>
                     ))}
-                    </SimpleGrid>
-                    </Box>
-                {events.length === 0 && <Text>No bookings found.</Text>}
-                </Flex>
+                </SimpleGrid>
+                <Button colorScheme="blue" onClick={handleLogout} marginTop={10} >Logout</Button>
+            </Box>
+            {events.length === 0 && <Text>No bookings found.</Text>}
+            </Flex>
             <Footer />
         </Box>
     );
