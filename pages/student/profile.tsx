@@ -54,7 +54,7 @@ const ProfilesPage = () => {
             <Navbar />
             <Flex flex="1" p="4" overflowY="auto" alignItems="start">
             <Box p={8}>
-                <Heading as="h1" mb={4}>{userName}'s Bookings</Heading>
+            <Heading as="h1" mb={4}>{userName}&apos;s Bookings</Heading>
                 <SimpleGrid columns={2} spacing={4}>
                     {events.map(event => (
                         <Box key={event.id} shadow="md" borderWidth="1px" bg="gray.50" p={4}>
