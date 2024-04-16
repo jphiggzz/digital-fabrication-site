@@ -33,7 +33,7 @@ const AdminLanding = () => {
                     <Text fontSize="lg" textAlign="center">
                         Hub for all admin functions (manage time slots, reservations, and printers here)
                     </Text>
-                    <Link href='/manage-reservations' color='blue.400' _hover={{ color: 'blue.500' }}>
+                    <Link href='/admin/reservations' color='blue.400' _hover={{ color: 'blue.500' }}>
                         <Button colorScheme="blue" size="lg">
                             Manage Reservations
                         </Button>

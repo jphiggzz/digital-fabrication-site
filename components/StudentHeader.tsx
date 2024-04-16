@@ -2,8 +2,6 @@ import { Text, Flex, Button, HStack, chakra, Link, IconButton } from '@chakra-ui
 import React from 'react';
 import { FaUser } from 'react-icons/fa';
 
-const CTA = 'Go to Homepage';
-
 const data = [
     { label: 'Reservations', href: '/student/printing' },
     { label: 'Resources', href: '/student/resources' },
@@ -29,11 +27,6 @@ export default function Header() {
           ))}
         </HStack>
         {/* Call to action */}
-        <HStack>
-            <Link href="https://www.digitalfabricationlab.com" isExternal>
-                <Button>{CTA}</Button>
-        </Link>
-            </HStack>
             <IconButton
                 aria-label="Profile"
                 icon={<FaUser />}
