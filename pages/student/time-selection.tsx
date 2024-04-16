@@ -60,27 +60,47 @@ const TimeSelection = () => {
             const newDay = direction === 'next' ? addDays(prev, 1) : subDays(prev, 1);
             if (direction === 'next' && differenceInCalendarDays(newDay, today) > 7) return prev;
             if (direction === 'prev' && isBefore(newDay, today)) return today;
+    
+            // Update startDateTime to the new selected day
+            const startDateTime = new Date(newDay);
+            startDateTime.setHours(0, 0, 0, 0);
+    
+            // Calculate endDateTime as two hours after startDateTime
+            const endDateTime = new Date(startDateTime);
+            endDateTime.setHours(startDateTime.getHours() + 2);
+    
+            setNewEventDetails(prev => ({
+                ...prev,
+                startTime: startDateTime,
+                endTime: endDateTime
+            }));
+    
             return newDay;
         });
     };
 
     const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const localTime = new Date(event.target.value);
+        const inputValue = event.target.value;
+        if (!inputValue) return; // Check if input value is empty
+        const localTime = new Date(inputValue);
         const timeInUtc = new Date(Date.UTC(localTime.getFullYear(), localTime.getMonth(), localTime.getDate(), localTime.getHours(), localTime.getMinutes()));
         setNewEventDetails(prev => ({
             ...prev,
             startTime: timeInUtc
         }));
     };
-
+    
     const handleEndTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const localTime = new Date(event.target.value);
+        const inputValue = event.target.value;
+        if (!inputValue) return; // Check if input value is empty
+        const localTime = new Date(inputValue);
         const timeInUtc = new Date(Date.UTC(localTime.getFullYear(), localTime.getMonth(), localTime.getDate(), localTime.getHours(), localTime.getMinutes()));
         setNewEventDetails(prev => ({
             ...prev,
             endTime: timeInUtc
         }));
     };
+    
 
     const addNewEvent = async () => {
         const { ID, startTime, endTime } = newEventDetails;
@@ -140,7 +160,7 @@ const TimeSelection = () => {
     const renderEvent = (event : Event) => {
         return (
             <Box key={event.id} borderWidth="1px" borderRadius="lg" overflow="hidden" p={4} my={2}>
-                <Text>{event.id}</Text>
+            <Text fontWeight="bold">{event.id}</Text>
                 <Text>Start: {formatDateToString(new Date(event.startTime))}</Text>
                 <Text>End: {formatDateToString(new Date(event.endTime))}</Text>
                 <Text>User: {event.user}</Text>
