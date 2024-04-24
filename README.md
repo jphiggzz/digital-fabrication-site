@@ -1,5 +1,9 @@
 # Digital Fabrication Lab Reservation System
 
+## Important Info for Using App
+We've had trouble reverting the rule that users must be associated with Vanderbilt.edu due to an issue with the admin cloud console, so users must login with a vanderbilt.edu email to access the site.
+Additionally, we've added Prof. Singh's vanderbilt email and the TA's emails to the admin db, which should grant access to the admin side.
+
 ## What We're Making
 The client for our project is Professor Florian and the Digital Fabrication Lab at Vanderbilt University. The Digital Fabrication Lab is a new lab at Vanderbilt that centres around additive manufacturing methods like filament, resin, and powder printing. A current issue that the lab is facing is an overwhelming amount of students trying to use a limited amount of resources. Because of this, students may have to wait days before being able to use the equipment. Our group wants to create a central hub for students to reserve printer times, and for professors to manage and track the usage of their printers.
 
